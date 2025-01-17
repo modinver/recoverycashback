@@ -64,12 +64,7 @@ export default function Article() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           Article not found
         </h1>
-        <Button asChild>
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
-          </Link>
-        </Button>
+       
       </div>
     );
   }
@@ -105,40 +100,41 @@ export default function Article() {
       </Helmet>
 
       <article className="max-w-4xl mx-auto px-4 py-12">
-        <Button
-          variant="ghost"
-          asChild
-          className="mb-8"
-        >
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
-          </Link>
-        </Button>
-
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             {article.meta_title}
           </h1>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <span>{(article.author as any)?.name || "Anonymous"}</span>
-            </div>
-            {article.published_at && (
+          <div className="space-y-2">
+            <Button
+              variant="link"
+              asChild
+              className="p-0 h-auto text-sm text-gray-600 dark:text-gray-400 hover:text-primary"
+            >
+              <Link to="/" className="inline-flex items-center gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                <span>Home</span>
+              </Link>
+            </Button>
+            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <time dateTime={article.published_at}>
-                  {format(new Date(article.published_at), "MMMM d, yyyy")}
-                </time>
+                <User className="w-4 h-4" />
+                <span>{(article.author as any)?.name || "Anonymous"}</span>
               </div>
-            )}
+              {article.published_at && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <time dateTime={article.published_at}>
+                    {format(new Date(article.published_at), "MMMM d, yyyy")}
+                  </time>
+                </div>
+              )}
+            </div>
           </div>
           {article.featured_image && (
             <img
               src={article.featured_image}
               alt={article.meta_title}
-              className="w-full h-64 object-cover rounded-lg"
+              className="w-full h-64 object-cover rounded-lg mt-6"
             />
           )}
         </header>
