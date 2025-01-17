@@ -69,7 +69,7 @@ export function BlogArticlesList() {
                 )}
               </div>
               <Link
-                to={`/${article.slug_url}`}
+                to={article.slug_url}
                 className="block group"
               >
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3">
