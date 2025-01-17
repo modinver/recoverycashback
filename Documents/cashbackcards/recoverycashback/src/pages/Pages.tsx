@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -13,72 +13,51 @@ import {
 } from "@/components/ui/table";
 import { Pencil, Trash2, Plus, Eye, EyeOff } from "lucide-react";
 import { PageDialog } from "@/components/pages/PageDialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
 export default function Pages() {
-  const [selectedPage, setSelectedPage] = useState<Tables<"pages"> | null>(null);
+  const [selectedPage, setSelectedPage] = useState<Tables<"webpages"> | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const { data: pages, refetch, error: queryError, isLoading } = useQuery({
-    queryKey: ["pages"],
+  const { data: pages, refetch, isLoading, error } = useQuery({
+    queryKey: ["webpages"],
     queryFn: async () => {
-      console.log("Fetching pages...");
+      console.log("Fetching webpages...");
       const { data, error } = await supabase
-        .from("pages")
+        .from("webpages")
         .select("*")
         .order("created_at", { ascending: false });
       
       if (error) {
-        console.error("Error fetching pages:", error);
+        console.error("Error fetching webpages:", error);
         throw error;
       }
       
-      console.log("Pages fetched successfully:", data);
+      console.log("Webpages fetched successfully:", data);
       return data;
     },
   });
 
-  useEffect(() => {
-    console.log("Current pages state:", { pages, isLoading, error: queryError });
-  }, [pages, isLoading, queryError]);
-
-  if (queryError) {
-    console.error("Query error:", queryError);
-    return (
-      <div className="container mx-auto py-10">
-        <div className="text-red-500">Error loading pages: {queryError.message}</div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-10">
-        <div>Loading pages...</div>
-      </div>
-    );
-  }
-
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase.from("pages").delete().eq("id", id);
+      const { error } = await supabase.from("webpages").delete().eq("id", id);
       
       if (error) {
-        console.error("Error deleting page:", error);
+        console.error("Error deleting webpage:", error);
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Could not delete page. Please try again.",
+          description: "Could not delete webpage. Please try again.",
         });
         return;
       }
       
       toast({
         title: "Success",
-        description: "Page deleted successfully.",
+        description: "Webpage deleted successfully.",
       });
       refetch();
     } catch (error) {
@@ -86,12 +65,12 @@ export default function Pages() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An unexpected error occurred while deleting the page.",
+        description: "An unexpected error occurred while deleting the webpage.",
       });
     }
   };
 
-  const handleEdit = (page: Tables<"pages">) => {
+  const handleEdit = (page: Tables<"webpages">) => {
     setSelectedPage(page);
     setIsDialogOpen(true);
   };
@@ -110,19 +89,48 @@ export default function Pages() {
     }
   };
 
+  if (error) {
+    return (
+      <div className="container mx-auto py-10">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-md">
+          <h2 className="text-lg font-semibold mb-2">Error Loading Webpages</h2>
+          <p>{(error as Error).message}</p>
+          <p className="text-sm mt-2">Please make sure you are logged in as an admin user.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-10">
+        <div className="flex items-center justify-center">
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-52"></div>
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded w-96"></div>
+              <div className="h-4 bg-gray-200 rounded w-80"></div>
+              <div className="h-4 bg-gray-200 rounded w-88"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Pages</h1>
+        <h1 className="text-3xl font-bold">Web Pages</h1>
         <Button onClick={handleCreate}>
           <Plus className="w-4 h-4 mr-2" />
-          Add Page
+          Add Web Page
         </Button>
       </div>
 
       {pages && pages.length === 0 ? (
         <div className="text-center py-10 text-gray-500">
-          No pages found. Create your first page by clicking the "Add Page" button above.
+          No webpages found. Create your first webpage by clicking the "Add Web Page" button above.
         </div>
       ) : (
         <Table>

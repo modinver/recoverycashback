@@ -57,6 +57,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(card?.image_url || "");
   const [isPromotion, setIsPromotion] = useState(card?.is_promotion || false);
+  const [isCashbackCard, setIsCashbackCard] = useState(card?.cashback_card || false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -79,6 +80,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
       setOffers(card.offers || "");
       setPreviewUrl(card.image_url || "");
       setIsPromotion(card.is_promotion || false);
+      setIsCashbackCard(card.cashback_card || false);
       setImageFile(null);
     } else if (open) {
       // Reset form for new card
@@ -98,6 +100,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
       setOffers("");
       setPreviewUrl("");
       setIsPromotion(false);
+      setIsCashbackCard(false);
       setImageFile(null);
     }
   }, [open, card]);
@@ -168,6 +171,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
         offers: offers || null,
         image_url: imageUrl,
         is_promotion: isPromotion,
+        cashback_card: isCashbackCard,
       };
 
       if (card) {
@@ -363,14 +367,22 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
               />
             </div>
             
-            <div className="col-span-2">
+            <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="isPromotion"
+                  id="is_promotion"
                   checked={isPromotion}
                   onCheckedChange={(checked) => setIsPromotion(checked as boolean)}
                 />
-                <Label htmlFor="isPromotion">Mark as Promotion</Label>
+                <Label htmlFor="is_promotion">Promotion Card</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="cashback_card"
+                  checked={isCashbackCard}
+                  onCheckedChange={(checked) => setIsCashbackCard(checked as boolean)}
+                />
+                <Label htmlFor="cashback_card">Is Cashback Card</Label>
               </div>
             </div>
           </div>

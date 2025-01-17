@@ -9,7 +9,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, User, LogIn } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { ThemeProvider } from "next-themes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Home from "./pages/Home";
@@ -22,6 +22,7 @@ import Tags from "./pages/Tags";
 import Authors from "./pages/Authors";
 import Article from "./pages/Article";
 import FAQs from "./pages/FAQs";
+import Webpages from "./pages/Webpages";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -42,20 +43,6 @@ const UserProfile = () => {
     navigate("/");
   };
 
-  if (!email) {
-    return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate("/auth/login")}
-        className="gap-2"
-      >
-        <LogIn className="h-4 w-4" />
-        Login
-      </Button>
-    );
-  }
-
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -66,11 +53,11 @@ const UserProfile = () => {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => navigate("/auth/login")}
+        onClick={handleLogout}
         className="gap-2"
       >
-        <LogIn className="h-4 w-4" />
-        Login
+        <LogOut className="h-4 w-4" />
+        Logout
       </Button>
     </div>
   );
@@ -87,26 +74,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth/login" element={<Login />} />
-            <Route path="/" element={
-              <div className="min-h-screen flex w-full">
-                <main className="flex-1">
-                  <div className="flex justify-end items-center p-4">
-                    <UserProfile />
-                  </div>
-                  <Home />
-                </main>
-              </div>
-            } />
-            <Route path="/:slug" element={
-              <div className="min-h-screen flex w-full">
-                <main className="flex-1">
-                  <div className="flex justify-end items-center p-4">
-                    <UserProfile />
-                  </div>
-                  <Article />
-                </main>
-              </div>
-            } />
+            <Route path="/" element={<Home />} />
+            <Route path="/:slug" element={<Article />} />
             <Route
               path="/admin/*"
               element={
@@ -127,6 +96,7 @@ const App = () => (
                           <Route path="/tags" element={<Tags />} />
                           <Route path="/authors" element={<Authors />} />
                           <Route path="/faqs" element={<FAQs />} />
+                          <Route path="/webpages" element={<Webpages />} />
                         </Routes>
                       </main>
                     </div>

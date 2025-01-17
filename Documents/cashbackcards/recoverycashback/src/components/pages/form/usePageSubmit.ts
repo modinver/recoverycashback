@@ -4,7 +4,7 @@ import { Tables } from "@/integrations/supabase/types";
 import { useToast } from "@/components/ui/use-toast";
 
 interface UsePageSubmitProps {
-  page: Tables<"pages"> | null;
+  page: Tables<"webpages"> | null;
   onSuccess: () => void;
 }
 
@@ -13,7 +13,7 @@ export function usePageSubmit({ page, onSuccess }: UsePageSubmitProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log("Submitting page form:", data);
+      console.log("Submitting webpage form:", data);
       
       const values = {
         meta_title: data.meta_title,
@@ -27,32 +27,32 @@ export function usePageSubmit({ page, onSuccess }: UsePageSubmitProps) {
       console.log("Prepared values:", values);
 
       if (page) {
-        console.log("Updating existing page:", page.id);
+        console.log("Updating existing webpage:", page.id);
         const { error } = await supabase
-          .from("pages")
+          .from("webpages")
           .update(values)
           .eq("id", page.id);
         if (error) throw error;
       } else {
-        console.log("Creating new page");
+        console.log("Creating new webpage");
         const { error } = await supabase
-          .from("pages")
+          .from("webpages")
           .insert([values]);
         if (error) throw error;
       }
 
-      console.log("Page saved successfully");
+      console.log("Webpage saved successfully");
       toast({
         title: "Success",
-        description: `Page ${page ? "updated" : "created"} successfully.`,
+        description: `Webpage ${page ? "updated" : "created"} successfully.`,
       });
       onSuccess();
     } catch (error) {
-      console.error("Error saving page:", error);
+      console.error("Error saving webpage:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: `Could not ${page ? "update" : "create"} page. Please try again.`,
+        description: `Could not ${page ? "update" : "create"} webpage. Please try again.`,
       });
     }
   };

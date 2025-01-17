@@ -331,6 +331,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_promotion: boolean | null
+          cashback_card: boolean | null
           joining_offer: string | null
           late_fee: number | null
           minimum_due: string | null
@@ -352,6 +353,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_promotion?: boolean | null
+          cashback_card?: boolean | null
           joining_offer?: string | null
           late_fee?: number | null
           minimum_due?: string | null
@@ -373,6 +375,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_promotion?: boolean | null
+          cashback_card?: boolean | null
           joining_offer?: string | null
           late_fee?: number | null
           minimum_due?: string | null
@@ -423,42 +426,6 @@ export type Database = {
         }
         Relationships: []
       }
-      pages: {
-        Row: {
-          created_at: string
-          document_text: string
-          id: string
-          is_published: boolean | null
-          meta_description: string
-          meta_title: string
-          published_at: string | null
-          slug_url: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          document_text: string
-          id?: string
-          is_published?: boolean | null
-          meta_description: string
-          meta_title: string
-          published_at?: string | null
-          slug_url: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          document_text?: string
-          id?: string
-          is_published?: boolean | null
-          meta_description?: string
-          meta_title?: string
-          published_at?: string | null
-          slug_url?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string
@@ -500,6 +467,42 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      webpages: {
+        Row: {
+          created_at: string
+          document_text: string
+          id: string
+          is_published: boolean | null
+          meta_description: string
+          meta_title: string
+          published_at: string | null
+          slug_url: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          document_text: string
+          id?: string
+          is_published?: boolean | null
+          meta_description: string
+          meta_title: string
+          published_at?: string | null
+          slug_url: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          document_text?: string
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string
+          meta_title?: string
+          published_at?: string | null
+          slug_url?: string
           updated_at?: string
         }
         Relationships: []

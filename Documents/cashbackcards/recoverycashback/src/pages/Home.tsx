@@ -123,9 +123,9 @@ export default function Home() {
               banks={banks}
             />
 
-            <PromotedCards promotedCards={promotedCards} />
-
             <ComparisonSection allCards={allCards} formatAED={formatAED} />
+
+            <PromotedCards promotedCards={promotedCards} />
 
             <FeaturesSection />
 

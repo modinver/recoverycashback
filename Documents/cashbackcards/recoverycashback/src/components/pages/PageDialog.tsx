@@ -13,7 +13,7 @@ import { PageFormFields } from "./PageFormFields";
 import { PageFormActions } from "./form/PageFormActions";
 
 interface PageDialogProps {
-  page: Tables<"pages"> | null;
+  page: Tables<"webpages"> | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;

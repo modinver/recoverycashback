@@ -242,25 +242,19 @@ export default function CreditCards() {
             <TableHead>Bank</TableHead>
             <TableHead>Minimum Salary</TableHead>
             <TableHead>Annual Fee</TableHead>
-            <TableHead>Promotion</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Updated At</TableHead>
-            <TableHead className="w-[150px]">Actions</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {cards?.map((card) => (
             <TableRow key={card.id}>
               <TableCell>{card.card_name}</TableCell>
-              <TableCell>{(card.bank as any)?.name || "-"}</TableCell>
-              <TableCell>
-                {card.minimum_salary ? formatAED(card.minimum_salary) : "-"}
-              </TableCell>
+              <TableCell>{card.bank?.name}</TableCell>
+              <TableCell>{formatAED(card.minimum_salary)}</TableCell>
               <TableCell>{card.annual_fee || "-"}</TableCell>
-              <TableCell>{card.is_promotion ? "Yes" : "No"}</TableCell>
-              <TableCell>{formatDate(card.created_at)}</TableCell>
-              <TableCell>{formatDate(card.updated_at)}</TableCell>
-              <TableCell className="flex gap-2">
+              <TableCell>{card.cashback_card ? "Cashback Card" : "Credit Card"}</TableCell>
+              <TableCell className="text-right">
                 <Button
                   variant="outline"
                   size="icon"

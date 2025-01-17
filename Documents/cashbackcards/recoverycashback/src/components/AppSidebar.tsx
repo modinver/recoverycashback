@@ -1,4 +1,4 @@
-import { CreditCard, Building2, FileText, Settings, Tags, Users, Home, LogOut, HelpCircle, FileJson } from "lucide-react";
+import { FileText, Tags, Users, Building2, CreditCard, Home, HelpCircle } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,8 +10,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 const menuItems = [
   {
@@ -39,9 +37,9 @@ const menuItems = [
     description: "Content management"
   },
   {
-    title: "Pages",
+    title: "Web Pages",
     icon: FileText,
-    path: "/admin/pages",
+    path: "/admin/webpages",
     description: "Static pages management"
   },
   {
@@ -67,16 +65,6 @@ const menuItems = [
 export function AppSidebar() {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success("Logged out successfully");
-      navigate("/");
-    } catch (error) {
-      toast.error("Error logging out");
-    }
-  };
-
   return (
     <Sidebar>
       <SidebarContent>
@@ -100,17 +88,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              
-              {/* Logout Button */}
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  onClick={handleLogout}
-                  className="group relative flex items-center gap-2 hover:bg-destructive/10 text-destructive hover:text-destructive transition-colors duration-200"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span className="font-medium">Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

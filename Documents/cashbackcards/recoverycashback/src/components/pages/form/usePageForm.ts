@@ -14,7 +14,7 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>;
 
-export function usePageForm(page: Tables<"pages"> | null) {
+export function usePageForm(page: Tables<"webpages"> | null) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
