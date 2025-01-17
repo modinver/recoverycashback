@@ -4,12 +4,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { UseFormReturn } from "react-hook-form";
 import { FormData } from "./form/useWebpageForm";
+import { ContentEditor } from "../articles/ContentEditor";
 
 interface WebpageFormFieldsProps {
   form: UseFormReturn<FormData>;
 }
 
 export function WebpageFormFields({ form }: WebpageFormFieldsProps) {
+  const handleImageUpload = (url: string) => {
+    const currentContent = form.getValues("document_text");
+    const imageMarkdown = `\n![Page Image](${url})`;
+    form.setValue("document_text", currentContent + imageMarkdown);
+  };
+
   return (
     <>
       <FormField
@@ -45,22 +52,27 @@ export function WebpageFormFields({ form }: WebpageFormFieldsProps) {
           <FormItem>
             <FormLabel>URL Slug</FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input {...field} placeholder="e.g., about-us" />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
+      <ContentEditor form={form} onImageUpload={handleImageUpload} />
       <FormField
         control={form.control}
         name="is_published"
         render={({ field }) => (
-          <FormItem className="flex items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
-              <FormLabel className="text-base">Publish Page</FormLabel>
+              <FormLabel className="text-base">Published</FormLabel>
+              <FormMessage />
             </div>
             <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
             </FormControl>
           </FormItem>
         )}

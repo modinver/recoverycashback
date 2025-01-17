@@ -16,6 +16,7 @@ import { WebpageDialog } from "@/components/webpages/WebpageDialog";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 export default function Webpages() {
   const [selectedWebpage, setSelectedWebpage] = useState<Tables<"webpages"> | null>(null);
@@ -88,7 +89,15 @@ export default function Webpages() {
         <TableBody>
           {webpages?.map((webpage) => (
             <TableRow key={webpage.id}>
-              <TableCell>{webpage.meta_title}</TableCell>
+              <TableCell>
+                <Link 
+                  to={`/${webpage.slug_url}`}
+                  target="_blank"
+                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                >
+                  {webpage.meta_title}
+                </Link>
+              </TableCell>
               <TableCell>
                 <Badge variant={webpage.is_published ? "default" : "secondary"}>
                   {webpage.is_published ? (

@@ -20,9 +20,9 @@ import CreditCards from "./pages/CreditCards";
 import Articles from "./pages/Articles";
 import Tags from "./pages/Tags";
 import Authors from "./pages/Authors";
-import Article from "./pages/Article";
 import FAQs from "./pages/FAQs";
 import Webpages from "./pages/Webpages";
+import DynamicPage from "./pages/DynamicPage";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -49,16 +49,10 @@ const UserProfile = () => {
         <User className="h-4 w-4" />
         <span>{email}</span>
       </div>
-      <ThemeToggle />
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleLogout}
-        className="gap-2"
-      >
+      <Button variant="ghost" size="icon" onClick={handleLogout}>
         <LogOut className="h-4 w-4" />
-        Logout
       </Button>
+      <ThemeToggle />
     </div>
   );
 };
@@ -75,7 +69,6 @@ const App = () => (
           <Routes>
             <Route path="/auth/login" element={<Login />} />
             <Route path="/" element={<Home />} />
-            <Route path="/:slug" element={<Article />} />
             <Route
               path="/admin/*"
               element={
@@ -104,6 +97,7 @@ const App = () => (
                 </AuthGuard>
               }
             />
+            <Route path="/:slug" element={<DynamicPage />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
