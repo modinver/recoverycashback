@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
+import { CreditCard } from "@/integrations/supabase/types/database/card.types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -51,7 +52,7 @@ const formatDate = (dateString: string | null | undefined) => {
 // ... keep existing code (component state and query definitions)
 
 export default function CreditCards() {
-  const [selectedCard, setSelectedCard] = useState<Tables<"credit_cards"> | null>(
+  const [selectedCard, setSelectedCard] = useState<CreditCard | null>(
     null
   );
   const [selectedBenefit, setSelectedBenefit] = useState<
@@ -66,6 +67,17 @@ export default function CreditCards() {
   const [cardToDelete, setCardToDelete] = useState<string | null>(null);
   const [benefitToDelete, setBenefitToDelete] = useState<string | null>(null);
   const [isDeleteBenefitDialogOpen, setIsDeleteBenefitDialogOpen] = useState(false);
+  const [selectedWebpage, setSelectedWebpage] = useState<string | null>(null);
+  const [selectedCardForRates, setSelectedCardForRates] = useState<string | null>(
+    null
+  );
+  const [selectedRate, setSelectedRate] = useState<Tables<"cashback_rates"> | null>(
+    null
+  );
+  const [isRatesDialogOpen, setIsRatesDialogOpen] = useState(false);
+  const [isDeleteRateDialogOpen, setIsDeleteRateDialogOpen] = useState(false);
+  const [rateToDelete, setRateToDelete] = useState<string | null>(null);
+
   const { toast } = useToast();
 
   const { data: cards, refetch: refetchCards } = useQuery({
@@ -73,11 +85,23 @@ export default function CreditCards() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("credit_cards")
-        .select("*, bank:banks(name)")
+        .select(`
+          *,
+          bank:banks(name),
+          webpage:webpages(id, meta_title)
+        `)
         .order("card_name");
 
       if (error) throw error;
-      return data;
+      
+      return ((data || []) as unknown[]).map(card => {
+        const typedCard = card as Partial<CreditCard>;
+        return {
+          ...typedCard,
+          bank: typedCard.bank || null,
+          webpage: typedCard.webpage || null,
+        } as CreditCard;
+      });
     },
   });
 
@@ -107,6 +131,19 @@ export default function CreditCards() {
     },
   });
 
+  const { data: webpages, refetch: refetchWebpages } = useQuery({
+    queryKey: ["webpages"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("webpages")
+        .select("*")
+        .order("title");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("credit_cards").delete().eq("id", id);
 
@@ -128,7 +165,7 @@ export default function CreditCards() {
   };
 
   const handleEdit = (card: Tables<"credit_cards">) => {
-    setSelectedCard(card);
+    setSelectedCard(card as CreditCard);
     setIsCardDialogOpen(true);
   };
 
@@ -183,16 +220,6 @@ export default function CreditCards() {
     setIsDeleteBenefitDialogOpen(false);
   };
 
-  const [selectedCardForRates, setSelectedCardForRates] = useState<string | null>(
-    null
-  );
-  const [selectedRate, setSelectedRate] = useState<Tables<"cashback_rates"> | null>(
-    null
-  );
-  const [isRatesDialogOpen, setIsRatesDialogOpen] = useState(false);
-  const [isDeleteRateDialogOpen, setIsDeleteRateDialogOpen] = useState(false);
-  const [rateToDelete, setRateToDelete] = useState<string | null>(null);
-
   const handleManageRates = (cardId: string, cardName: string) => {
     setSelectedCardForRates(cardId);
     setSelectedRate(null);
@@ -225,6 +252,11 @@ export default function CreditCards() {
     setIsDeleteRateDialogOpen(false);
   };
 
+  const handleWebpageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = event.target.value;
+    setSelectedWebpage(selectedId);
+  };
+
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
@@ -243,6 +275,7 @@ export default function CreditCards() {
             <TableHead>Minimum Salary</TableHead>
             <TableHead>Annual Fee</TableHead>
             <TableHead>Type</TableHead>
+            <TableHead>Webpage</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -254,6 +287,7 @@ export default function CreditCards() {
               <TableCell>{formatAED(card.minimum_salary)}</TableCell>
               <TableCell>{card.annual_fee || "-"}</TableCell>
               <TableCell>{card.cashback_card ? "Cashback Card" : "Credit Card"}</TableCell>
+              <TableCell>{card.webpage?.meta_title || "-"}</TableCell>
               <TableCell className="text-right">
                 <Button
                   variant="outline"
@@ -412,7 +446,7 @@ export default function CreditCards() {
           </TableBody>
         </Table>
       </div>
-
+      
       <CreditCardDialog
         card={selectedCard}
         open={isCardDialogOpen}

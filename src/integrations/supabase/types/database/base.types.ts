@@ -309,6 +309,8 @@ export interface Database {
           other_key_benefits: string | null
           overlimit_fee: string | null
           updated_at: string
+          webpage_id: string | null
+          cashback_card: boolean
         }
         Insert: {
           annual_fee?: string | null
@@ -330,6 +332,8 @@ export interface Database {
           other_key_benefits?: string | null
           overlimit_fee?: string | null
           updated_at?: string
+          webpage_id?: string | null
+          cashback_card: boolean
         }
         Update: {
           annual_fee?: string | null
@@ -351,6 +355,8 @@ export interface Database {
           other_key_benefits?: string | null
           overlimit_fee?: string | null
           updated_at?: string
+          webpage_id?: string | null
+          cashback_card?: boolean
         }
         Relationships: [
           {
@@ -360,6 +366,13 @@ export interface Database {
             referencedRelation: "banks"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "credit_cards_webpage_id_fkey"
+            columns: ["webpage_id"]
+            isOneToOne: false
+            referencedRelation: "webpages"
+            referencedColumns: ["id"]
+          }
         ]
       }
       profiles: {
@@ -406,6 +419,39 @@ export interface Database {
           updated_at?: string
         }
         Relationships: []
+      }
+      webpages: {
+        Row: {
+          id: string
+          meta_title: string
+          meta_description: string
+          document_text: string
+          slug_url: string
+          is_published: boolean
+          published_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          meta_title: string
+          meta_description: string
+          document_text: string
+          slug_url: string
+          is_published?: boolean
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          meta_title?: string
+          meta_description?: string
+          document_text?: string
+          slug_url?: string
+          is_published?: boolean
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
       }
     }
     Enums: {

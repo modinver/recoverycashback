@@ -27,11 +27,6 @@ export const PromotedCardOffers = ({ joiningOffer, offers }: PromotedCardOffersP
           ))}
         </div>
       )}
-      <div className="mt-4">
-        <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
-          Learn More
-        </Button>
-      </div>
     </div>
   );
 };

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Tables } from "@/integrations/supabase/types";
+import { CreditCard } from "@/integrations/supabase/types/database/card.types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -33,7 +33,7 @@ const parseAED = (value: string): number | null => {
 };
 
 interface CreditCardDialogProps {
-  card: Tables<"credit_cards"> | null;
+  card: CreditCard | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
@@ -58,6 +58,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
   const [previewUrl, setPreviewUrl] = useState(card?.image_url || "");
   const [isPromotion, setIsPromotion] = useState(card?.is_promotion || false);
   const [isCashbackCard, setIsCashbackCard] = useState(card?.cashback_card || false);
+  const [selectedWebpage, setSelectedWebpage] = useState<string | null>(card?.webpage?.id || null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -81,6 +82,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
       setPreviewUrl(card.image_url || "");
       setIsPromotion(card.is_promotion || false);
       setIsCashbackCard(card.cashback_card || false);
+      setSelectedWebpage(card.webpage?.id || null);
       setImageFile(null);
     } else if (open) {
       // Reset form for new card
@@ -101,6 +103,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
       setPreviewUrl("");
       setIsPromotion(false);
       setIsCashbackCard(false);
+      setSelectedWebpage(null);
       setImageFile(null);
     }
   }, [open, card]);
@@ -112,7 +115,20 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
         .from("banks")
         .select("*")
         .order("name");
-      
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: webpages } = useQuery({
+    queryKey: ["webpages"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("webpages")
+        .select("id, meta_title")
+        .order("meta_title");
+
       if (error) throw error;
       return data;
     },
@@ -141,6 +157,10 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
       .getPublicUrl(filePath);
 
     return publicUrl;
+  };
+
+  const handleWebpageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedWebpage(event.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -172,6 +192,7 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
         image_url: imageUrl,
         is_promotion: isPromotion,
         cashback_card: isCashbackCard,
+        webpage: selectedWebpage
       };
 
       if (card) {
@@ -220,20 +241,21 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div className="col-span-2">
               <Label htmlFor="bank">Bank</Label>
-              <Select value={bankId} onValueChange={setBankId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a bank" />
-                </SelectTrigger>
-                <SelectContent>
-                  {banks?.map((bank) => (
-                    <SelectItem key={bank.id} value={bank.id}>
-                      {bank.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                id="bank"
+                value={bankId}
+                onChange={(e) => setBankId(e.target.value)}
+                className="w-full p-2 border rounded-md bg-white"
+              >
+                <option value="">Select a bank</option>
+                {banks?.map((bank) => (
+                  <option key={bank.id} value={bank.id}>
+                    {bank.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">
@@ -366,7 +388,37 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
                 placeholder="Enter minimum due"
               />
             </div>
-            
+
+            <div className="col-span-2">
+              <Label htmlFor="cardType">Card Type</Label>
+              <select
+                id="cardType"
+                value={isCashbackCard ? "cashback" : "credit"}
+                onChange={(e) => setIsCashbackCard(e.target.value === "cashback")}
+                className="w-full p-2 border rounded-md bg-white"
+              >
+                <option value="cashback">Cashback Card</option>
+                <option value="credit">Credit Card</option>
+              </select>
+            </div>
+
+            <div className="col-span-2">
+              <Label htmlFor="webpage">Webpage</Label>
+              <select
+                id="webpage"
+                value={selectedWebpage || ""}
+                onChange={(e) => setSelectedWebpage(e.target.value || null)}
+                className="w-full p-2 border rounded-md bg-white"
+              >
+                <option value="">Select a webpage</option>
+                {webpages?.map((webpage) => (
+                  <option key={webpage.id} value={webpage.id}>
+                    {webpage.meta_title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -375,14 +427,6 @@ export function CreditCardDialog({ card, open, onOpenChange, onSuccess }: Credit
                   onCheckedChange={(checked) => setIsPromotion(checked as boolean)}
                 />
                 <Label htmlFor="is_promotion">Promotion Card</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="cashback_card"
-                  checked={isCashbackCard}
-                  onCheckedChange={(checked) => setIsCashbackCard(checked as boolean)}
-                />
-                <Label htmlFor="cashback_card">Is Cashback Card</Label>
               </div>
             </div>
           </div>

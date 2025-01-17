@@ -4,7 +4,28 @@ export type Bank = Database["public"]["Tables"]["banks"]["Row"];
 export type CardBenefit = Database["public"]["Tables"]["card_benefits"]["Row"];
 export type CardRequest = Database["public"]["Tables"]["card_requests"]["Row"];
 export type CashbackRate = Database["public"]["Tables"]["cashback_rates"]["Row"];
-export type CreditCard = Database["public"]["Tables"]["credit_cards"]["Row"];
+export type Webpage = Database["public"]["Tables"]["webpages"]["Row"];
+
+type Tables = Database["public"]["Tables"];
+
+// Tipo base para tarjetas de crédito
+type BaseCreditCard = Tables["credit_cards"]["Row"];
+
+// Tipo para la respuesta de Supabase
+export type SupabaseCreditCardResponse = {
+    bank: Pick<Tables["banks"]["Row"], "name"> | null;
+    webpage: Pick<Tables["webpages"]["Row"], "id" | "meta_title" | "slug_url"> | null;
+    cashback_rates: CashbackRate[] | null;
+    card_benefits: CardBenefit[] | null;
+} & Omit<BaseCreditCard, "webpage_id">;
+
+// Tipo para el componente
+export type CreditCard = Omit<BaseCreditCard, "webpage_id"> & {
+    bank?: Pick<Tables["banks"]["Row"], "name"> | null;
+    webpage?: Pick<Tables["webpages"]["Row"], "id" | "meta_title" | "slug_url"> | null;
+    cashback_rates?: CashbackRate[];
+    card_benefits?: CardBenefit[];
+};
 
 // Insert Types
 export type BankInsert = Database["public"]["Tables"]["banks"]["Insert"];
