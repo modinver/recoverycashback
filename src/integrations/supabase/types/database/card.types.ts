@@ -12,12 +12,12 @@ type Tables = Database["public"]["Tables"];
 type BaseCreditCard = Tables["credit_cards"]["Row"];
 
 // Tipo para la respuesta de Supabase
-export type SupabaseCreditCardResponse = {
-    bank: Pick<Tables["banks"]["Row"], "name"> | null;
-    webpage: Pick<Tables["webpages"]["Row"], "id" | "meta_title" | "slug_url"> | null;
-    cashback_rates: CashbackRate[] | null;
-    card_benefits: CardBenefit[] | null;
-} & Omit<BaseCreditCard, "webpage_id">;
+export type SupabaseCreditCardResponse = Omit<BaseCreditCard, "webpage_id"> & {
+    bank?: { name: string } | null;
+    webpage?: { id: string; meta_title: string; slug_url: string } | null | { error: true };
+    cashback_rates?: CashbackRate[] | null;
+    card_benefits?: CardBenefit[] | null;
+};
 
 // Tipo para el componente
 export type CreditCard = Omit<BaseCreditCard, "webpage_id"> & {

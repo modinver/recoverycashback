@@ -20,13 +20,16 @@ export default function Home() {
   // Función para convertir la respuesta de Supabase al tipo CreditCard
   const convertToCreditCard = (data: any[]): CreditCard[] => {
     console.log("Raw data from Supabase:", data);
-    const converted = data.map(card => ({
-      ...card,
-      bank: card.bank || null,
-      webpage: card.webpage || null,
-      cashback_rates: card.cashback_rates || [],
-      card_benefits: card.card_benefits || []
-    }));
+    const converted = data.map(card => {
+      const webpage = card.webpage && 'error' in card.webpage ? null : card.webpage;
+      return {
+        ...card,
+        bank: card.bank || null,
+        webpage: webpage,
+        cashback_rates: Array.isArray(card.cashback_rates) ? card.cashback_rates : [],
+        card_benefits: Array.isArray(card.card_benefits) ? card.card_benefits : []
+      };
+    });
     console.log("Converted data:", converted);
     return converted;
   };
@@ -134,11 +137,78 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Helmet>
-        <title>Cashback Cards - Compare Credit Cards</title>
+        <title>Cashback Cards - UAE Compare Credit Cards</title>
         <meta
           name="description"
           content="Compare credit cards and find the best cashback rewards for your spending habits."
         />
+        <script type="application/ld+json">
+          {JSON.stringify([
+            {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Cashback Cards',
+            description: 'Compare credit cards and find the best cashback rewards for your spending habits.',
+            url: 'https://recoverycashback.com',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://recoverycashback.com/search?q={search_term_string}',
+              'query-input': 'required name=search_term_string'
+            },
+            mainEntity: {
+              '@type': 'ItemList',
+              itemListElement: promotedCards?.map((card, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                item: {
+                  '@type': 'Product',
+                  name: card.card_name,
+                  description: `${card.card_name} - Annual Fee: ${card.annual_fee}`,
+                  image: card.image_url,
+                  brand: {
+                    '@type': 'Organization',
+                    name: card.bank?.name || ''
+                  },
+                  offers: {
+                    '@type': 'Offer',
+                    price: card.annual_fee.replace(/[^0-9]/g, ''),
+                    priceCurrency: 'AED',
+                    availability: 'https://schema.org/InStock'
+                  }
+                }
+              })) || []
+            }
+          },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Recovery Cashback LLC',
+              url: 'https://recoverycashback.com',
+              logo: 'https://recoverycashback.com/logo.png',
+              description: 'Leading credit card comparison platform in UAE helping users find the best cashback rewards.',
+              address: {
+                '@type': 'PostalAddress',
+                addressCountry: 'AE',
+                addressRegion: 'Dubai',
+                addressLocality: 'Barsha Heights',
+                streetAddress: 'The One Tower - 12th Floor - Sheikh Zayed Rd'
+              },
+              sameAs: [
+                'https://www.facebook.com/recoverycashback',
+                'https://twitter.com/recoverycashback',
+                'https://www.linkedin.com/company/recoverycashback'
+              ],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'customer service',
+                telephone: '+971 4 381 2000',
+                email: 'info@recoverycashback.com',
+                availableLanguage: ['English', 'Arabic'],
+                areaServed: 'AE'
+              }
+            }
+          ])}
+        </script>
       </Helmet>
 
       <NavMenu />
