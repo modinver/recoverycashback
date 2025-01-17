@@ -32,9 +32,9 @@ export const FooterSection = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-gray-400">
-              <li>Dubai, UAE</li>
+              <li>The One Tower - 12th Floor - Sheikh Zayed Rd - Barsha Heights - Dubai</li>
               <li>info@recoverycashback.com</li>
-              <li>+971 XX XXX XXXX</li>
+              <li>04 381 2000</li>
             </ul>
           </div>
         </div>
