@@ -1,0 +1,5 @@
+<svg width="200" height="48" viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="8" fill="#9B87F5"/>
+  <path d="M24 10C15.716 10 9 16.716 9 25C9 33.284 15.716 40 24 40C32.284 40 39 33.284 39 25C39 16.716 32.284 10 24 10ZM31.75 26.5H26.25L28.5 31H24L21.75 26.5H16.25L18.5 31H13.5L11.25 26.5H9V23.5H12.5L10.25 18.5H14.5L16.75 23.5H21.75L19.5 18.5H24L26.25 23.5H31.25L29 18.5H34L36.25 23.5H38.5V26.5H35L32.75 31H27.75L30 26.5Z" fill="white"/>
+  <text x="58" y="32" font-family="Arial" font-weight="bold" font-size="20" fill="#333333">RecoveryCashback</text>
+</svg>
