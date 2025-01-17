@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pencil, Trash2, Plus, Eye, EyeOff } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Link as LinkIcon } from "lucide-react";
 import { ArticleDialog } from "@/components/articles/ArticleDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
@@ -89,6 +90,7 @@ export default function Articles() {
             <TableHead>Title</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Author</TableHead>
+            <TableHead>Share</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Published At</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
@@ -109,6 +111,54 @@ export default function Articles() {
                 </Badge>
               </TableCell>
               <TableCell>{(article.authors as any)?.name}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const url = `${window.location.origin}/blog/${article.slug_url}`;
+                      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(article.meta_title)}`, '_blank');
+                    }}
+                  >
+                    <Twitter className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const url = `${window.location.origin}/blog/${article.slug_url}`;
+                      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                    }}
+                  >
+                    <Facebook className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const url = `${window.location.origin}/blog/${article.slug_url}`;
+                      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+                    }}
+                  >
+                    <Linkedin className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const url = `${window.location.origin}/blog/${article.slug_url}`;
+                      navigator.clipboard.writeText(url);
+                      toast({
+                        title: "Link copied!",
+                        description: "The article link has been copied to your clipboard.",
+                      });
+                    }}
+                  >
+                    <LinkIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+              </TableCell>
               <TableCell>{formatDate(article.created_at)}</TableCell>
               <TableCell>{formatDate(article.published_at)}</TableCell>
               <TableCell className="flex gap-2">

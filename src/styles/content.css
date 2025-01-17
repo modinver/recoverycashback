@@ -1,0 +1,75 @@
+/* Estilos para el contenido de artículos y páginas */
+.prose h2 {
+  @apply text-2xl font-light text-purple-600 dark:text-purple-400 mt-8 mb-4 tracking-wide;
+  letter-spacing: 0.025em;
+}
+
+.prose h3 {
+  @apply text-xl font-medium text-gray-800 dark:text-gray-200 mt-6 mb-3;
+}
+
+.prose p {
+  @apply text-gray-700 dark:text-gray-300 leading-relaxed mb-6;
+  font-family: 'Inter', sans-serif;
+}
+
+.prose a {
+  @apply text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors duration-200;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.prose ul {
+  @apply space-y-2 my-6 list-none;
+}
+
+.prose ul li {
+  @apply flex items-start space-x-2;
+}
+
+.prose ul li::before {
+  content: "•";
+  @apply text-purple-500 dark:text-purple-400 inline-block w-4 flex-shrink-0;
+}
+
+.prose blockquote {
+  @apply pl-4 border-l-4 border-purple-300 dark:border-purple-700 italic my-6 text-gray-600 dark:text-gray-400;
+}
+
+.prose img {
+  @apply rounded-lg shadow-md my-8;
+}
+
+.prose code {
+  @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm text-purple-600 dark:text-purple-400;
+}
+
+.prose pre {
+  @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto my-6;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-gray-800 dark:text-gray-200;
+}
+
+/* Estilo para las tablas */
+.prose table {
+  @apply w-full border-collapse my-8;
+}
+
+.prose table th {
+  @apply bg-gray-100 dark:bg-gray-800 text-left py-2 px-4 font-medium text-gray-700 dark:text-gray-300;
+}
+
+.prose table td {
+  @apply border-b border-gray-200 dark:border-gray-700 py-2 px-4 text-gray-600 dark:text-gray-400;
+}
+
+/* Estilo para elementos destacados */
+.prose strong {
+  @apply font-semibold text-gray-900 dark:text-gray-100;
+}
+
+.prose em {
+  @apply text-gray-700 dark:text-gray-300 italic;
+}

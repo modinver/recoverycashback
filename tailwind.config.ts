@@ -18,8 +18,71 @@ export default {
       },
     },
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            h2: {
+              fontWeight: '200',
+              fontSize: '2.5rem',
+              marginTop: '3rem',
+              marginBottom: '2rem',
+              lineHeight: '1.3',
+              color: 'rgb(147 51 234)',
+              borderBottom: '2px solid rgb(147 51 234 / 0.2)',
+              paddingBottom: '0.5rem',
+            },
+            h3: {
+              fontWeight: '300',
+              fontSize: '2rem',
+              marginTop: '2.5rem',
+              marginBottom: '1.5rem',
+              lineHeight: '1.4',
+            },
+            p: {
+              marginTop: '1.5rem',
+              marginBottom: '1.5rem',
+              lineHeight: '1.8',
+              fontSize: '1.125rem',
+              fontWeight: '300',
+            },
+            a: {
+              color: 'rgb(147 51 234)',
+              textDecoration: 'none',
+              borderBottomWidth: '1px',
+              borderColor: 'rgb(147 51 234 / 0.2)',
+              transition: 'all 0.2s',
+              '&:hover': {
+                borderColor: 'rgb(147 51 234)',
+              },
+            },
+            'ul > li': {
+              marginTop: '1rem',
+              marginBottom: '1rem',
+              paddingLeft: '1.5rem',
+              position: 'relative',
+              '&::before': {
+                content: '"•"',
+                position: 'absolute',
+                left: 0,
+                color: 'rgb(147 51 234)',
+                fontWeight: 'bold',
+              },
+            },
+            blockquote: {
+              fontStyle: 'italic',
+              borderLeftWidth: '4px',
+              borderColor: 'rgb(147 51 234)',
+              backgroundColor: 'rgb(147 51 234 / 0.05)',
+              padding: '1rem 0 1rem 2rem',
+              margin: '2rem 0',
+              borderRadius: '0 0.5rem 0.5rem 0',
+            },
+          },
+        },
+      },
       fontFamily: {
-        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "SF Pro Text", "system-ui", "sans-serif"],
+        sans: ["Inter var", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -70,123 +133,6 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            'h1': {
-              marginTop: '2rem',
-              marginBottom: '1.5rem',
-              fontSize: '2.25rem',
-              lineHeight: '2.5rem',
-              fontWeight: '100', // Reduced from 200 to 100 for thinner appearance
-              letterSpacing: '-0.025em',
-              color: 'hsl(var(--foreground))',
-              fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Display, system-ui, sans-serif',
-            },
-            'h2': {
-              marginTop: '2.5rem',
-              marginBottom: '1.25rem',
-              fontSize: '1.875rem',
-              lineHeight: '2.25rem',
-              fontWeight: '100', // Reduced from 200 to 100 for thinner appearance
-              letterSpacing: '-0.025em',
-              color: 'hsl(230, 84%, 70%)', // Changed to a more professional blue-violet shade
-              fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Display, system-ui, sans-serif',
-            },
-            'h3': {
-              marginTop: '2rem',
-              marginBottom: '1rem',
-              fontSize: '1.5rem',
-              lineHeight: '2rem',
-              fontWeight: '100', // Reduced from 200 to 100 for thinner appearance
-              letterSpacing: '-0.025em',
-              color: 'hsl(var(--foreground))',
-              fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Display, system-ui, sans-serif',
-            },
-            'p': {
-              marginTop: '1.5rem',
-              marginBottom: '1.5rem',
-              lineHeight: '1.75',
-              fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, system-ui, sans-serif',
-            },
-            'ul': {
-              marginTop: '1.25rem',
-              marginBottom: '1.25rem',
-              paddingLeft: '1.625rem',
-              listStyleType: 'disc',
-              'li::marker': {
-                color: 'hsl(var(--primary))',
-              },
-            },
-            'li': {
-              marginTop: '0.5rem',
-              marginBottom: '0.5rem',
-              fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, system-ui, sans-serif',
-            },
-            'blockquote': {
-              fontStyle: 'italic',
-              borderLeftWidth: '4px',
-              borderLeftColor: 'hsl(var(--primary))',
-              paddingLeft: '1rem',
-              marginTop: '1.5rem',
-              marginBottom: '1.5rem',
-              fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, system-ui, sans-serif',
-            },
-            'code': {
-              color: 'hsl(var(--primary))',
-              backgroundColor: 'hsl(var(--muted))',
-              padding: '0.2rem 0.4rem',
-              borderRadius: '0.25rem',
-              fontSize: '0.875rem',
-              fontFamily: 'SF Mono, monospace',
-            },
-            'pre': {
-              backgroundColor: 'hsl(var(--muted))',
-              padding: '1rem',
-              borderRadius: '0.5rem',
-              overflowX: 'auto',
-            },
-            'a': {
-              color: 'hsl(var(--primary))',
-              textDecoration: 'underline',
-              '&:hover': {
-                color: 'hsl(var(--primary))',
-                opacity: 0.8,
-              },
-            },
-            'img': {
-              borderRadius: '0.5rem',
-              marginTop: '2rem',
-              marginBottom: '2rem',
-            },
-          },
-        },
-        dark: {
-          css: {
-            'h2': {
-              color: 'hsl(230, 84%, 70%)', // Match the light theme H2 color
-            },
-            'blockquote': {
-              borderLeftColor: 'hsl(var(--primary))',
-            },
-            'code': {
-              color: 'hsl(var(--primary))',
-              backgroundColor: 'hsl(var(--muted))',
-            },
-            'pre': {
-              backgroundColor: 'hsl(var(--muted))',
-            },
-            'a': {
-              color: 'hsl(var(--primary))',
-            },
-            'ul': {
-              'li::marker': {
-                color: 'hsl(var(--primary))',
-              },
-            },
-          },
-        },
       },
       keyframes: {
         "accordion-down": {

@@ -3,14 +3,31 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet";
 import { format } from "date-fns";
-import { User, Calendar, Tag, ArrowLeft, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import ReactMarkdown from 'react-markdown';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Calendar, User, Tag, Share2, Twitter, Facebook, Linkedin, Link as LinkIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-export default function Article() {
-  const { slug } = useParams<{ slug: string }>();
+interface Author {
+  name: string;
+  avatar_url?: string;
+}
 
-  const { data: article, isLoading } = useQuery({
+interface BlogArticle {
+  meta_title: string;
+  meta_description: string;
+  featured_image?: string;
+  published_at: string;
+  updated_at: string;
+  document_text: string;
+  author: Author;
+  tags: Array<{ id: string; name: string; }>;
+}
+
+const Article: React.FC = () => {
+  const { slug } = useParams();
+
+  const { data: article } = useQuery<BlogArticle>({
     queryKey: ["article", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,84 +44,90 @@ export default function Article() {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match our BlogArticle interface
+      return {
+        ...data,
+        tags: data.article_tags?.map((at: any) => at.tag) || []
+      } as BlogArticle;
     },
   });
 
-  const handleShare = async (platform: 'twitter' | 'facebook' | 'linkedin') => {
-    const url = window.location.href;
-    const title = article?.meta_title || '';
-    
-    const shareUrls = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-    };
-
-    window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-  };
-
-  if (isLoading) {
-    return (
-      <div className="animate-pulse max-w-4xl mx-auto px-4 py-12">
-        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>
-        <div className="space-y-3">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-        </div>
-      </div>
-    );
-  }
-
   if (!article) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Article not found
-        </h1>
-       
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  // Generate structured data for SEO
-  const structuredData = {
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": article.schema_type || "Article",
+    "@type": "Article",
     "headline": article.meta_title,
     "description": article.meta_description,
     "image": article.featured_image,
     "author": {
       "@type": "Person",
-      "name": (article.author as any)?.name || "Anonymous"
+      "name": article.author.name || "Anonymous"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "RecoveryCashback.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "/logo.svg"
+      }
     },
     "datePublished": article.published_at,
     "dateModified": article.updated_at
   };
 
+  const shareUrl = window.location.href;
+  const shareTitle = article.meta_title;
+
+  const socialLinks = [
+    {
+      name: 'Twitter',
+      icon: Twitter,
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`,
+      color: 'hover:text-[#1DA1F2]'
+    },
+    {
+      name: 'Facebook',
+      icon: Facebook,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      color: 'hover:text-[#4267B2]'
+    },
+    {
+      name: 'LinkedIn',
+      icon: Linkedin,
+      url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareTitle)}`,
+      color: 'hover:text-[#0077b5]'
+    },
+    {
+      name: 'Copy Link',
+      icon: LinkIcon,
+      onClick: () => {
+        navigator.clipboard.writeText(shareUrl);
+        // Aquí podrías añadir una notificación de "Link copiado"
+      },
+      color: 'hover:text-purple-600'
+    }
+  ];
+
   return (
     <>
       <Helmet>
-        <title>{article.meta_title}</title>
+        <title>{article.meta_title} | RecoveryCashback.com</title>
         <meta name="description" content={article.meta_description} />
-        <meta property="og:title" content={article.meta_title} />
-        <meta property="og:description" content={article.meta_description} />
         {article.featured_image && (
           <meta property="og:image" content={article.featured_image} />
         )}
         <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
+          {JSON.stringify(jsonLd)}
         </script>
       </Helmet>
 
       <article className="max-w-4xl mx-auto px-4 py-12">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            {article.meta_title}
-          </h1>
-          <div className="space-y-2">
+        <header className="mb-12">
+          <div className="flex items-center gap-2 mb-6">
             <Button
               variant="link"
               asChild
@@ -115,83 +138,121 @@ export default function Article() {
                 <span>Home</span>
               </Link>
             </Button>
-            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+          </div>
+
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+            {article.meta_title}
+          </h1>
+
+          <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-6">
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              <span>{article.author.name || "Anonymous"}</span>
+            </div>
+            {article.published_at && (
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                <span>{(article.author as any)?.name || "Anonymous"}</span>
+                <Calendar className="w-4 h-4" />
+                <time dateTime={article.published_at}>
+                  {format(new Date(article.published_at), "MMMM d, yyyy")}
+                </time>
               </div>
-              {article.published_at && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  <time dateTime={article.published_at}>
-                    {format(new Date(article.published_at), "MMMM d, yyyy")}
-                  </time>
-                </div>
-              )}
+            )}
+          </div>
+
+          {article.tags && article.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex items-center gap-2 mr-2">
+                <Tag className="w-4 h-4 text-purple-600" />
+              </div>
+              {article.tags.map((tag: any) => (
+                <Badge
+                  key={tag.id}
+                  variant="secondary"
+                  className="bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+                >
+                  {tag.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          <div className="flex items-center gap-4 mb-8">
+            <div className="flex items-center gap-2">
+              <Share2 className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-600">Share:</span>
+            </div>
+            <div className="flex items-center gap-3">
+              {socialLinks.map((link) => (
+                <Button
+                  key={link.name}
+                  variant="ghost"
+                  size="icon"
+                  className={`p-2 h-auto ${link.color} transition-colors`}
+                  onClick={link.onClick}
+                  asChild={!link.onClick}
+                >
+                  {link.onClick ? (
+                    <div>
+                      <link.icon className="w-5 h-5" />
+                    </div>
+                  ) : (
+                    <a href={link.url} target="_blank" rel="noopener noreferrer">
+                      <link.icon className="w-5 h-5" />
+                    </a>
+                  )}
+                </Button>
+              ))}
             </div>
           </div>
+
           {article.featured_image && (
             <img
               src={article.featured_image}
               alt={article.meta_title}
-              className="w-full h-64 object-cover rounded-lg mt-6"
+              className="w-full h-auto aspect-video object-cover rounded-xl shadow-lg mb-8"
             />
           )}
         </header>
 
-        <div className="prose dark:prose-invert prose-slate max-w-none mb-8">
-          <ReactMarkdown>{article.document_text}</ReactMarkdown>
+        <div className="prose prose-lg prose-purple max-w-none mb-8">
+          <ReactMarkdown>
+            {article.document_text}
+          </ReactMarkdown>
         </div>
 
-        <footer className="border-t border-gray-200 dark:border-gray-800 pt-8">
-          <div className="flex flex-wrap gap-2 mb-8">
-            {(article.article_tags as any)?.map(({ tag }: any) => (
-              <div
-                key={tag.id}
-                className="inline-flex items-center space-x-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-3 py-1 rounded-full"
-              >
-                <Tag className="w-3 h-3" />
-                <span>{tag.name}</span>
+        <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Share2 className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-600">Share this article:</span>
+              <div className="flex items-center gap-3">
+                {socialLinks.map((link) => (
+                  <Button
+                    key={link.name}
+                    variant="ghost"
+                    size="icon"
+                    className={`p-2 h-auto ${link.color} transition-colors`}
+                    onClick={link.onClick}
+                    asChild={!link.onClick}
+                  >
+                    {link.onClick ? (
+                      <div>
+                        <link.icon className="w-5 h-5" />
+                      </div>
+                    ) : (
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        <link.icon className="w-5 h-5" />
+                      </a>
+                    )}
+                  </Button>
+                ))}
               </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Share this article
-            </h3>
-            <div className="flex items-center justify-center gap-4">
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white rounded-full p-3 transition-all duration-200 hover:scale-110"
-                onClick={() => handleShare('twitter')}
-              >
-                <Share2 className="w-5 h-5" />
-                <span className="ml-2">Twitter</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-[#4267B2] hover:bg-[#365899] text-white rounded-full p-3 transition-all duration-200 hover:scale-110"
-                onClick={() => handleShare('facebook')}
-              >
-                <Share2 className="w-5 h-5" />
-                <span className="ml-2">Facebook</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-[#0077B5] hover:bg-[#006399] text-white rounded-full p-3 transition-all duration-200 hover:scale-110"
-                onClick={() => handleShare('linkedin')}
-              >
-                <Share2 className="w-5 h-5" />
-                <span className="ml-2">LinkedIn</span>
-              </Button>
             </div>
           </div>
         </footer>
       </article>
     </>
   );
-}
+};
+
+export default Article;
