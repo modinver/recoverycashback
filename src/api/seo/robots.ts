@@ -1,5 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { promises as fs } from 'fs';
+import path from 'path';
 
 type SeoConfig = Database['public']['Tables']['seo_config']['Row'];
 
@@ -40,6 +42,39 @@ export async function updateRobotsContent(content: string) {
 
   return true;
 }
+
+async function ensureRobotsTxt() {
+    const filePath = path.join(__dirname, '../../..', 'robots.txt'); // Ruta a la raíz del proyecto
+    console.log('Verificando la existencia de robots.txt en:', filePath);
+    try {
+        await fs.access(filePath);
+        console.log('robots.txt ya existe.');
+    } catch (error) {
+        console.log('robots.txt no encontrado, intentando crear uno nuevo...');
+        // Si el archivo no existe, obtener el contenido de la base de datos
+        const { data, error: dbError } = await supabase
+          .from('seo_config')
+          .select()
+          .single();
+
+        if (dbError) {
+          console.error("Error fetching robots.txt:", dbError);
+          return;
+        }
+
+        console.log('Datos obtenidos de la base de datos:', data);
+        const seoConfig = data as SeoConfig;
+        if (seoConfig && seoConfig.robots_txt) {
+            await fs.writeFile(filePath, seoConfig.robots_txt);
+            console.log('robots.txt creado con éxito.');
+        } else {
+            console.log('No se pudo obtener contenido para robots.txt.');
+        }
+    }
+}
+
+// Llamar a la función para asegurar que el robots.txt esté presente
+ensureRobotsTxt();
 
 function getDefaultRobotsContent() {
   return `User-agent: *

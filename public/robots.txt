@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Block access to admin paths
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+
+# Allow search engines to crawl all other content
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://recoverycashback.com/sitemap.xml
