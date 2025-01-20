@@ -450,6 +450,24 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_config: {
+        Row: {
+          id: number
+          robots_txt: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          robots_txt: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          robots_txt?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           created_at: string

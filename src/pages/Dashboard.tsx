@@ -81,69 +81,86 @@ const Dashboard = () => {
         {stats.map((stat) => (
           <Card 
             key={stat.title} 
-            className="relative overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group"
+            className="relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
             onClick={() => navigate(stat.link)}
           >
-            <div className="p-6">
-              <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-xl ${stat.color}`}>
-                  <stat.icon className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {stat.title}
-                  </p>
-                  <h2 className="text-3xl font-bold">{stat.value}</h2>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {stat.description}
-                  </p>
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-gray-800/50 dark:to-transparent"></div>
+            <div className="relative p-6 flex items-center space-x-4">
+              <div className={`flex-shrink-0 p-4 rounded-xl ${stat.color}`}>
+                <stat.icon className="w-10 h-10" />
               </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  {stat.title}
+                </p>
+                <p className="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {stat.description}
+                </p>
+              </div>
+              <ArrowUpRight className="w-6 h-6 text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300 transition-colors" />
             </div>
           </Card>
         ))}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="p-6 hover:shadow-lg transition-all duration-300">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <span className="w-1 h-6 bg-gradient-to-b from-purple-500 to-blue-500 rounded-full"></span>
-            Quick Actions
-          </h3>
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-              Manage credit cards and their benefits
-            </p>
-            <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-              Update bank information and partnerships
-            </p>
-            <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Create and publish blog articles
-            </p>
+        <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+          <div className="p-6">
+            <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-blue-500 rounded-full"></div>
+              <span>Quick Actions</span>
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 group cursor-pointer">
+                <div className="w-3 h-3 rounded-full bg-purple-500 shadow-lg shadow-purple-500/20"></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 group-hover:translate-x-1 transition-transform">
+                  Manage credit cards and their benefits
+                </p>
+              </div>
+              <div className="flex items-center space-x-3 group cursor-pointer">
+                <div className="w-3 h-3 rounded-full bg-blue-500 shadow-lg shadow-blue-500/20"></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 group-hover:translate-x-1 transition-transform">
+                  Update bank information and partnerships
+                </p>
+              </div>
+              <div className="flex items-center space-x-3 group cursor-pointer">
+                <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20"></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 group-hover:translate-x-1 transition-transform">
+                  Create and publish blog articles
+                </p>
+              </div>
+            </div>
           </div>
         </Card>
 
-        <Card className="p-6 hover:shadow-lg transition-all duration-300">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <span className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></span>
-            System Status
-          </h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-sm text-muted-foreground">All systems operational</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-sm text-muted-foreground">Database connected</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-sm text-muted-foreground">API services active</p>
+        <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+          <div className="p-6">
+            <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+              <span>System Status</span>
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 group">
+                <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20 animate-pulse"></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 group-hover:translate-x-1 transition-transform">
+                  All systems operational
+                </p>
+              </div>
+              <div className="flex items-center space-x-3 group">
+                <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20 animate-pulse"></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 group-hover:translate-x-1 transition-transform">
+                  Database connected
+                </p>
+              </div>
+              <div className="flex items-center space-x-3 group">
+                <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20 animate-pulse"></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 group-hover:translate-x-1 transition-transform">
+                  API services active
+                </p>
+              </div>
             </div>
           </div>
         </Card>

@@ -122,19 +122,20 @@ export type Database = {
       seo_config: {
         Row: {
           id: number
-          robots_txt: string | null
-          updated_at: string | null
+          robots_txt: string
+          updated_at: string
         }
         Insert: {
           id?: number
-          robots_txt?: string | null
-          updated_at?: string | null
+          robots_txt: string
+          updated_at?: string
         }
         Update: {
           id?: number
-          robots_txt?: string | null
-          updated_at?: string | null
+          robots_txt?: string
+          updated_at?: string
         }
+        Relationships: []
       }
       tags: {
         Row: {
@@ -154,6 +155,50 @@ export type Database = {
           name?: string
           created_at?: string
           updated_at?: string
+        }
+      }
+      webpages: {
+        Row: {
+          id: number
+          title: string
+          slug_url: string
+          document_text: string
+          meta_title: string
+          meta_description: string
+          meta_keywords: string | null
+          meta_image: string | null
+          featured_image: string | null
+          published_at: string
+          updated_at: string
+          schema_type: string
+        }
+        Insert: {
+          id?: number
+          title: string
+          slug_url: string
+          document_text?: string
+          meta_title?: string
+          meta_description?: string
+          meta_keywords?: string | null
+          meta_image?: string | null
+          featured_image?: string | null
+          published_at?: string
+          updated_at?: string
+          schema_type?: string
+        }
+        Update: {
+          id?: number
+          title?: string
+          slug_url?: string
+          document_text?: string
+          meta_title?: string
+          meta_description?: string
+          meta_keywords?: string | null
+          meta_image?: string | null
+          featured_image?: string | null
+          published_at?: string
+          updated_at?: string
+          schema_type?: string
         }
       }
     }

@@ -23,6 +23,8 @@ import Authors from "./pages/Authors";
 import FAQs from "./pages/FAQs";
 import Webpages from "./pages/Webpages";
 import DynamicPage from "./pages/DynamicPage";
+import Robots from "./pages/admin/SEO/Robots";
+import RobotsTxt from "./pages/RobotsTxt";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -67,6 +69,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            <Route path="/robots.txt" element={<RobotsTxt />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/" element={<Home />} />
             <Route
@@ -90,6 +93,7 @@ const App = () => (
                           <Route path="/authors" element={<Authors />} />
                           <Route path="/faqs" element={<FAQs />} />
                           <Route path="/webpages" element={<Webpages />} />
+                          <Route path="/seo/robots" element={<Robots />} />
                         </Routes>
                       </main>
                     </div>

@@ -3,88 +3,163 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info, RotateCcw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+const defaultRobotsContent = `User-agent: *
+Allow: /
+
+# Block access to admin paths
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+
+# Allow search engines to crawl all other content
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml`;
 
 export default function RobotsPage() {
-  const [robotsContent, setRobotsContent] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localContent, setLocalContent] = useState(defaultRobotsContent);
+  const [isDirty, setIsDirty] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["robots-txt"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("seo_config")
+        .select("robots_txt")
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    }
+  });
 
   useEffect(() => {
-    fetchRobotsContent();
-  }, []);
-
-  const fetchRobotsContent = async () => {
-    setError(null);
-    try {
-      const response = await fetch("/api/admin/seo/robots");
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch robots.txt");
-      }
-      const data = await response.json();
-      setRobotsContent(data.content || "");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      console.error("Error loading robots.txt:", error);
-      setError(errorMessage);
-      toast.error(`Error loading robots.txt: ${errorMessage}`);
+    if (data?.robots_txt) {
+      setLocalContent(data.robots_txt);
     }
-  };
+  }, [data]);
 
-  const handleSave = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/admin/seo/robots", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: robotsContent }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to save robots.txt");
-      }
-      
+  const updateMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const { error } = await supabase
+        .from("seo_config")
+        .upsert({
+          robots_txt: content,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+      return content;
+    },
+    onSuccess: () => {
       toast.success("robots.txt updated successfully");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      console.error("Error saving robots.txt:", error);
-      setError(errorMessage);
-      toast.error(`Error saving robots.txt: ${errorMessage}`);
-    } finally {
-      setIsLoading(false);
+      setIsDirty(false);
+      queryClient.invalidateQueries({ queryKey: ["robots-txt"] });
+    },
+    onError: (error) => {
+      toast.error(`Error saving robots.txt: ${error.message}`);
     }
+  });
+
+  const handleContentChange = (content: string) => {
+    setLocalContent(content);
+    setIsDirty(true);
   };
+
+  const handleSave = () => {
+    updateMutation.mutate(localContent);
+  };
+
+  const handleReset = () => {
+    setLocalContent(defaultRobotsContent);
+    setIsDirty(true);
+  };
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-md">
+        Error loading robots.txt: {error instanceof Error ? error.message : "Unknown error"}
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6">
       <Card>
         <CardHeader>
-          <CardTitle>Robots.txt Editor</CardTitle>
-          <CardDescription>
-            Edit your site's robots.txt file to control search engine crawling behavior
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Robots.txt Editor</CardTitle>
+              <CardDescription>
+                Edit your site's robots.txt file to control search engine crawling behavior
+              </CardDescription>
+            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-sm">
+                  <p>The robots.txt file tells search engines which pages they can and cannot crawl on your website.</p>
+                  <p className="mt-2">Common directives:</p>
+                  <ul className="list-disc pl-4 mt-1">
+                    <li>User-agent: Specifies which robot the rules apply to</li>
+                    <li>Allow: Permits crawling of specified pages</li>
+                    <li>Disallow: Prevents crawling of specified pages</li>
+                    <li>Sitemap: Points to your XML sitemap location</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </CardHeader>
         <CardContent>
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md">
-              Error: {error}
-            </div>
-          )}
           <Textarea
-            value={robotsContent}
-            onChange={(e) => setRobotsContent(e.target.value)}
+            value={localContent}
+            onChange={(e) => handleContentChange(e.target.value)}
             className="min-h-[400px] font-mono"
             placeholder="Enter your robots.txt content here..."
+            disabled={isLoading}
           />
-          <div className="mt-4">
+          <div className="mt-4 flex items-center gap-2">
             <Button 
               onClick={handleSave}
-              disabled={isLoading}
+              disabled={isLoading || !isDirty || updateMutation.isPending}
             >
-              {isLoading ? "Saving..." : "Save Changes"}
+              {updateMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onClick={handleReset}
+                    disabled={isLoading || updateMutation.isPending}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Reset to Default
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Reset to a default robots.txt configuration
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardContent>
       </Card>
