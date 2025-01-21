@@ -1,0 +1,13 @@
+[33m96e18da[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Descripción de los cambios realizados
+[33m9494e38[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m Actualizar archivos y añadir robots.txt
+[33m04c8de1[m feat(seo): Implementar funcionalidad completa de robots.txt - Actualizado componente Robots.tsx para usar Supabase directamente - Configurado middleware en Vite para servir robots.txt dinámicamente - Mejorado manejo de errores y estado del componente - Añadido contenido por defecto seguro
+[33mb622621[m Initial commit
+[33m445aa81[m Add routing documentation
+[33me61f477[m feat: add SEO schema for organization and website
+[33med08f15[m fix: mejorado el manejo de páginas estáticas y estilos de contenido
+[33mabd369e[m feat: complete UI overhaul
+[33m3b71f0a[m feat: enhance navbar design
+[33m73fd8f3[m refactor: improve page and article display
+[33m7ab3f77[m refactor: remove back to home button from article not found page
+[33m3a5a1b1[m fix: Mejoras en el diseño de las tarjetas promocionadas
+[33ma5d8f2f[m Initial commit
