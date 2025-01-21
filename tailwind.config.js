@@ -6,6 +6,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './node_modules/@uiw/react-md-editor/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
     container: {
@@ -20,10 +21,20 @@ module.exports = {
         gradient: {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
-        }
+        },
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
       },
       animation: {
         gradient: 'gradient 8s ease infinite',
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -65,7 +76,68 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '100%',
+            color: 'hsl(var(--foreground))',
+            '[class~="lead"]': {
+              color: 'hsl(var(--foreground))',
+            },
+            a: {
+              color: 'hsl(var(--primary))',
+            },
+            strong: {
+              color: 'hsl(var(--foreground))',
+            },
+            'ol > li::marker': {
+              color: 'hsl(var(--foreground))',
+            },
+            'ul > li::marker': {
+              color: 'hsl(var(--foreground))',
+            },
+            hr: {
+              borderColor: 'hsl(var(--border))',
+            },
+            blockquote: {
+              borderLeftColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))',
+            },
+            h1: {
+              color: 'hsl(var(--foreground))',
+            },
+            h2: {
+              color: 'hsl(var(--foreground))',
+            },
+            h3: {
+              color: 'hsl(var(--foreground))',
+            },
+            h4: {
+              color: 'hsl(var(--foreground))',
+            },
+            'figure figcaption': {
+              color: 'hsl(var(--muted-foreground))',
+            },
+            code: {
+              color: 'hsl(var(--foreground))',
+            },
+            'a code': {
+              color: 'hsl(var(--primary))',
+            },
+            pre: {
+              backgroundColor: 'hsl(var(--muted))',
+              color: 'hsl(var(--foreground))',
+            },
+            thead: {
+              borderBottomColor: 'hsl(var(--border))',
+            },
+            'tbody tr': {
+              borderBottomColor: 'hsl(var(--border))',
+            },
+          },
+        },
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 }

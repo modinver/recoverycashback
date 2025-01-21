@@ -159,47 +159,100 @@ export type Database = {
       }
       webpages: {
         Row: {
-          id: number
-          title: string
+          id: string
+          meta_title: string
           slug_url: string
           document_text: string
-          meta_title: string
           meta_description: string
           meta_keywords: string | null
-          meta_image: string | null
+          meta_altimage: string | null
           featured_image: string | null
-          published_at: string
+          youtube_link: string | null
+          tiktok_link: string | null
+          instagram_link: string | null
+          reddit_link: string | null
+          is_published: boolean
+          published_at: string | null
+          created_at: string
           updated_at: string
-          schema_type: string
+          author: string | null
+          shcema_type: 'article' | 'blogPosting' | 'newsArticle' | 'review' | 'howTo' | null
+          type: boolean | null
+          doc_type: boolean | null
         }
         Insert: {
-          id?: number
-          title: string
+          id?: string
+          meta_title: string
           slug_url: string
-          document_text?: string
-          meta_title?: string
-          meta_description?: string
+          document_text: string
+          meta_description: string
           meta_keywords?: string | null
-          meta_image?: string | null
+          meta_altimage?: string | null
           featured_image?: string | null
-          published_at?: string
+          youtube_link?: string | null
+          tiktok_link?: string | null
+          instagram_link?: string | null
+          reddit_link?: string | null
+          is_published?: boolean
+          published_at?: string | null
+          created_at?: string
           updated_at?: string
-          schema_type?: string
+          author?: string | null
+          shcema_type?: 'article' | 'blogPosting' | 'newsArticle' | 'review' | 'howTo' | null
+          type?: boolean | null
+          doc_type?: boolean | null
         }
         Update: {
-          id?: number
-          title?: string
+          id?: string
+          meta_title?: string
           slug_url?: string
           document_text?: string
-          meta_title?: string
           meta_description?: string
           meta_keywords?: string | null
-          meta_image?: string | null
+          meta_altimage?: string | null
           featured_image?: string | null
-          published_at?: string
+          youtube_link?: string | null
+          tiktok_link?: string | null
+          instagram_link?: string | null
+          reddit_link?: string | null
+          is_published?: boolean
+          published_at?: string | null
+          created_at?: string
           updated_at?: string
-          schema_type?: string
+          author?: string | null
+          shcema_type?: 'article' | 'blogPosting' | 'newsArticle' | 'review' | 'howTo' | null
+          type?: boolean | null
+          doc_type?: boolean | null
         }
+        Relationships: []
+      }
+      webpages_tags: {
+        Row: {
+          webpage_id: string
+          tag_id: string
+        }
+        Insert: {
+          webpage_id: string
+          tag_id: string
+        }
+        Update: {
+          webpage_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webpages_tags_webpage_id_fkey"
+            columns: ["webpage_id"]
+            referencedRelation: "webpages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webpages_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
   }

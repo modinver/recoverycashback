@@ -12,6 +12,7 @@ import {
 import { Info, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRobotsContent, updateRobotsContent } from "@/api/seo/robots";
 
 const defaultRobotsContent = `User-agent: *
 Allow: /
@@ -35,33 +36,18 @@ export default function RobotsPage() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["robots-txt"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("seo_config")
-        .select("robots_txt")
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    }
+    queryFn: getRobotsContent
   });
 
   useEffect(() => {
-    if (data?.robots_txt) {
-      setLocalContent(data.robots_txt);
+    if (data) {
+      setLocalContent(data);
     }
   }, [data]);
 
   const updateMutation = useMutation({
     mutationFn: async (content: string) => {
-      const { error } = await supabase
-        .from("seo_config")
-        .upsert({
-          robots_txt: content,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+      await updateRobotsContent(content);
       return content;
     },
     onSuccess: () => {
@@ -70,7 +56,7 @@ export default function RobotsPage() {
       queryClient.invalidateQueries({ queryKey: ["robots-txt"] });
     },
     onError: (error) => {
-      toast.error(`Error saving robots.txt: ${error.message}`);
+      toast.error(`Error saving robots.txt: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   });
 

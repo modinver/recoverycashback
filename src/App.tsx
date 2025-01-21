@@ -17,7 +17,6 @@ import Login from "./pages/auth/Login";
 import Dashboard from "./pages/Dashboard";
 import Banks from "./pages/Banks";
 import CreditCards from "./pages/CreditCards";
-import Articles from "./pages/Articles";
 import Tags from "./pages/Tags";
 import Authors from "./pages/Authors";
 import FAQs from "./pages/FAQs";
@@ -88,7 +87,6 @@ const App = () => (
                           <Route index element={<Dashboard />} />
                           <Route path="/banks" element={<Banks />} />
                           <Route path="/credit-cards" element={<CreditCards />} />
-                          <Route path="/articles" element={<Articles />} />
                           <Route path="/tags" element={<Tags />} />
                           <Route path="/authors" element={<Authors />} />
                           <Route path="/faqs" element={<FAQs />} />

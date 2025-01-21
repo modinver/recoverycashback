@@ -32,12 +32,6 @@ const menuItems = [
     description: "Banking institutions"
   },
   {
-    title: "Blog Articles",
-    icon: FileText,
-    path: "/admin/articles",
-    description: "Content management"
-  },
-  {
     title: "Web Pages",
     icon: FileText,
     path: "/admin/webpages",
@@ -99,7 +93,6 @@ export function AppSidebar() {
       'Dashboard': 'blue',
       'Credit Cards': 'indigo',
       'Banks': 'purple',
-      'Blog Articles': 'pink',
       'Web Pages': 'rose',
       'Tags': 'orange',
       'Authors': 'amber',

@@ -137,10 +137,10 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Helmet>
-        <title>Cashback Cards - UAE Compare Credit Cards</title>
+        <title>TOP Best CashBack Cards in UAE - RecoveryCasBack.com</title>
         <meta
           name="description"
-          content="Compare credit cards and find the best cashback rewards for your spending habits."
+          content="Save money on your everyday purchases by using CashBack cards. Log in and choose the best one for you."
         />
         <script type="application/ld+json">
           {JSON.stringify([
@@ -148,7 +148,7 @@ export default function Home() {
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: 'Cashback Cards',
-            description: 'Compare credit cards and find the best cashback rewards for your spending habits.',
+            description: 'Save money on your everyday purchases by using CashBack cards. Log in and choose the best one for you.',
             url: 'https://recoverycashback.com',
             potentialAction: {
               '@type': 'SearchAction',

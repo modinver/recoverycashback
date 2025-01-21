@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.w-md-editor {
+  @apply bg-background text-foreground;
+}
+
+.w-md-editor-text {
+  @apply text-foreground;
+}
+
+.w-md-editor-toolbar {
+  @apply bg-muted border-border;
+}
+
+.w-md-editor-toolbar ul li button {
+  @apply text-foreground;
+}
+
+.w-md-editor-toolbar ul li button:hover {
+  @apply bg-accent text-accent-foreground;
+}
+
+.w-md-editor-preview {
+  @apply bg-background text-foreground;
+}
+
+.wmde-markdown {
+  @apply bg-background text-foreground;
+}
+
+.w-md-editor,
+.w-md-editor-show-live {
+  @apply min-h-[200px];
+}

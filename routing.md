@@ -1,177 +1,63 @@
 # Recovery Cashback - Architecture and Structure
 
-## Project Overview
-The project is a cashback credit card comparison application built with React and React Router. The application consists of two main parts:
-1. Public Frontend: For users to compare credit cards and view information
-2. Admin Dashboard: For managing the application's content and settings
+To start the app/web, I would suggest first creating a basic home page with a link to the backoffice, which will be the first part we develop. Once we have the backoffice, we will move on to building the home page and other URLs for the project.
+Additionally, I want to create the backoffice for the administrator to manage the application’s data. The backoffice should allow the admin to perform a CRUD (Create, Read, Update, Delete) on the general data of the application. Once all the credit cards and their data are added to the system, I will proceed to build the FrontPage to properly present everything.
+The backoffice needs to have all the necessary icons and functionalities to manage:
+Credit card data (from the credit cards table).
+Blog articles (from the blog table).
+User management (administering user accounts, roles, and permissions).
+The focus should be on perfecting the backoffice first before moving to the front-end implementation.
 
-## Routing Structure
-The application uses React Router (not Next.js) for routing. Here's the complete routing structure:
+The project you are developing is a cashback credit card comparison application, not a construction budgeting application. Apologies for the confusion.
+Below, I provide the ideal features for your cashback credit card comparison app in Next.js:
+1. Project Structure and Functionality
+Credit Card Comparison: Users should be able to compare different credit cards offering cashback. The app should display cashback rates, additional benefits, annual fees, etc.
+Filter and Sort: Users should be able to filter cards by various criteria (e.g., cashback percentage, annual fee, additional benefits, salary requirements).
+Card Detail: Each card should have a details page that includes all relevant information, such as cashback rate, fees, benefits, welcome offers, etc.
+2. Performance and SEO
+Static Site Generation (SSG): Use SSG for static pages containing credit card information. This will enhance performance as the pages are pre-generated during the site build.
+SEO Optimized: Each card and page should be optimized for SEO with titles, descriptions, and friendly URLs, using next/head to manage metadata tags.
+Fast Loading: Implement lazy loading for images and heavy resources to ensure low load times and a smooth user experience.
+3. API and Database Interaction
+API Routes in Next.js: Use Next.js API Routes to handle backend logic, such as fetching credit card data and comparing them.
+Relational Database: Use a database like SuperBase to store credit card information, including details such as bank name, cashback rate, annual fee, and other benefits.
+Cashback Calculation: The app should be capable of performing real-time calculations of the potential cashback a user could earn based on their purchases.
+4. User Interface
+Clean and Easy-to-Use Interface: The app should have an intuitive interface allowing users to quickly compare cards. Use components like comparison tables, interactive cards for each product, and a filter system to make searching easier.
+Responsive Design: Ensure the app is fully responsive for a smooth experience on both mobile and desktop devices.
+Payment and Registration Compatibility: If users can sign up or make payments, ensure you have secure forms and payment processes, using technologies like Stripe or PayPal for transactions.
+5. User Authentication (if necessary)
+NextAuth.js: Implement NextAuth.js to manage user authentication if you plan to allow registration or login.
+JWT for Secure Sessions: If the app needs to handle sessions or store personalized user information, implement a JWT-based authentication system.
+6. Integration with External Services
+Bank or Financial Services APIs: If possible, integrate bank or financial services APIs to retrieve up-to-date credit card cashback data and features.
+Real-Time Offers and Promotions: If the app offers information on special offers or promotions, ensure you integrate external sources to keep the data updated in real-time.
+7. User Feedback and Analytics
+Rating and Review System: Allow users to rate cards and leave comments. This will provide user-generated content that may be valuable to others.
+Usage Statistics: Optionally, include an analytics panel to monitor user behavior and which cards are the most viewed or highly rated.
+8. Notifications and Alerts
+Cashback Alerts: Notify users when new promotions or significant changes occur with cards that may affect their purchasing decisions.
+Payment Reminders: If relevant to your app, you can add a reminder system so users don’t miss payment deadlines.
+9. Security
+Data Encryption: Ensure that the app protects sensitive user information using security protocols like HTTPS and data encryption.
+Protection Against Attacks: Implement security measures such as protection against CSRF, XSS, and SQL Injection.
+With these features, you will be able to create an efficient, fast, secure, and easy-to-use cashback credit card comparison application while ensuring that it is optimized for both SEO and a high-quality user experience.
 
-### Public Routes
-- `/` - Home page
-- `/auth/login` - Login page
-- `/:slug` - Dynamic pages (blog posts, static pages)
+# SEO optimize
 
-### Admin Dashboard Routes
-All admin routes are protected by `AuthGuard` and use the `SidebarProvider` layout.
-Base path: `/admin/*`
+To configure the articles or the page in SEO we have the following fields that indicate the SEO configuration patterns
 
-```typescript
-/admin/
-├── / (Dashboard)
-├── /banks
-├── /credit-cards
-├── /articles
-├── /tags
-├── /authors
-├── /faqs
-├── /webpages
-└── /seo/
-    ├── /robots
-    └── /sitemap
-```
+Table: blog_articles
+Fields: meta_title; meta_description; slug_url; meta_image: string; meta_keyword, meta_image
 
-## Dashboard Menu Structure
-The dashboard menu is defined in `AppSidebar.tsx` with the following structure:
+   - Meta title
 
-```typescript
-const menuItems = [
-  {
-    title: "Dashboard",
-    icon: Home,
-    path: "/admin",
-    description: "Overview and statistics"
-  },
-  {
-    title: "Credit Cards",
-    icon: CreditCard,
-    path: "/admin/credit-cards",
-    description: "Manage credit card offerings"
-  },
-  {
-    title: "Banks",
-    icon: Building2,
-    path: "/admin/banks",
-    description: "Banking institutions"
-  },
-  {
-    title: "Blog Articles",
-    icon: FileText,
-    path: "/admin/articles",
-    description: "Content management"
-  },
-  {
-    title: "Web Pages",
-    icon: FileText,
-    path: "/admin/webpages",
-    description: "Static pages management"
-  },
-  {
-    title: "Tags",
-    icon: Tags,
-    path: "/admin/tags",
-    description: "Article categorization"
-  },
-  {
-    title: "Authors",
-    icon: Users,
-    path: "/admin/authors",
-    description: "Content creators"
-  },
-  {
-    title: "FAQs",
-    icon: HelpCircle,
-    path: "/admin/faqs",
-    description: "Manage frequently asked questions"
-  },
-  {
-    title: "SEO",
-    icon: Search,
-    description: "Search Engine Optimization",
-    submenu: [
-      {
-        title: "Robots.txt",
-        icon: FileJson,
-        path: "/admin/seo/robots",
-        description: "Configure robots.txt"
-      },
-      {
-        title: "Sitemap",
-        icon: Settings2,
-        path: "/admin/seo/sitemap",
-        description: "Manage XML sitemap"
-      }
-    ]
-  }
-]
-```
+   - Meta description
 
-## Important Implementation Notes
+   - Meta keywords
 
-### React Router Setup
-The routing is configured in `App.tsx` using React Router's nested routes structure:
+   - Meta image
 
-```typescript
-<BrowserRouter>
-  <Routes>
-    <Route path="/auth/login" element={<Login />} />
-    <Route path="/" element={<Home />} />
-    <Route path="/admin/*" element={
-      <AuthGuard>
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full">
-            <AppSidebar />
-            <main className="flex-1 p-6">
-              <Routes>
-                <Route index element={<Dashboard />} />
-                <Route path="/banks" element={<Banks />} />
-                <Route path="/credit-cards" element={<CreditCards />} />
-                <Route path="/articles" element={<Articles />} />
-                <Route path="/tags" element={<Tags />} />
-                <Route path="/authors" element={<Authors />} />
-                <Route path="/faqs" element={<FAQs />} />
-                <Route path="/webpages" element={<Webpages />} />
-                <Route path="/seo/robots" element={<Robots />} />
-              </Routes>
-            </main>
-          </div>
-        </SidebarProvider>
-      </AuthGuard>
-    } />
-    <Route path="/:slug" element={<DynamicPage />} />
-  </Routes>
-</BrowserRouter>
-```
-
-### Adding New Routes
-When adding new routes to the admin dashboard:
-
-1. Create the component in the appropriate directory under `src/pages/admin/`
-2. Add the route to the nested Routes in `App.tsx` under the `/admin/*` route
-3. Add the menu item to `menuItems` in `AppSidebar.tsx`
-4. Ensure the path in the menu item matches the route path exactly
-
-### Authentication
-All admin routes are protected by the `AuthGuard` component which:
-- Checks for valid authentication
-- Redirects to login if not authenticated
-- Provides user context to child components
-
-### Layout Structure
-The admin dashboard uses a consistent layout with:
-- Sidebar navigation (`AppSidebar`)
-- Top bar with user profile and sidebar toggle
-- Main content area with padding
-- Toast notifications for feedback
-
-### API Routes
-API endpoints follow a similar structure to the frontend routes:
-- `/api/admin/*` - Admin API endpoints
-- Each endpoint should handle appropriate HTTP methods (GET, POST, etc.)
-- All admin API endpoints should check for authentication
-
-Remember to always keep this documentation updated when making changes to the routing structure or menu items.
 
 ## Project General Structure
 
@@ -367,11 +253,38 @@ Fields: meta_title: string; meta_description: string; slug_url: string; meta_ima
 | faqs           | is_published            | boolean                  | YES         |
 | faqs           | created_at              | timestamp with time zone | NO          |
 | faqs           | updated_at              | timestamp with time zone | NO          |
-| webpages       | id                      | uuid                     | NO          |
-| webpages       | is_published            | boolean                  | YES         |
-| webpages       | created_at              | timestamp with time zone | NO          |
-| webpages       | updated_at              | timestamp with time zone | NO          |
-| webpages       | published_at            | timestamp with time zone | YES         |
+
+
+# Webpages
+
+# shcema_type  For Select Schema SEO
+# type         For select SSG/ISR type of Page boolean False=SSF True=ISR
+# doc_type      Type of Document o/False= Page True = Article
+
+
+| column_name      | data_type                | is_nullable | column_default               |
+| ---------------- | ------------------------ | ----------- | ---------------------------- |
+| id               | uuid                     | NO          | gen_random_uuid()            |
+| slug_url         | text                     | NO          |                              |
+| meta_title       | text                     | NO          |                              |
+| meta_description | text                     | NO          |                              |
+| document_text    | text                     | NO          |                              |
+| is_published     | boolean                  | YES         | false                        |
+| created_at       | timestamp with time zone | NO          | timezone('utc'::text, now()) |
+| updated_at       | timestamp with time zone | NO          | timezone('utc'::text, now()) |
+| published_at     | timestamp with time zone | YES         |                              |
+| youtube_link     | text                     | YES         |                              |
+| tiktok_link      | text                     | YES         |                              |
+| instagram_link   | text                     | YES         |                              |
+| reddit_link      | text                     | YES         |                              |
+| meta_keywords    | text                     | YES         |                              |
+| meta_altimage    | text                     | YES         |                              |
+| author           | uuid                     | YES         |                              |
+| shcema_type      | text                     | YES         |                              |
+| type             | boolean                  | YES         |                              |
+| doc_type         | boolean                  | YES         |                              |
+
+YES         |
 | seo_config     | created_at              | timestamp with time zone | NO          |
 | seo_config     | updated_at              | timestamp with time zone | NO          |
 | profiles       | id                      | uuid                     | NO          |

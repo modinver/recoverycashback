@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Plus, Eye, EyeOff } from "lucide-react";
 import { WebpageDialog } from "@/components/webpages/WebpageDialog";
 import { toast } from "sonner";
@@ -18,37 +17,45 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
+import { WebpageFormFields } from "@/components/webpages/WebpageFormFields";
+import { useWebpageForm } from "@/components/webpages/form/useWebpageForm";
+import { useWebpageSubmit } from "@/components/webpages/form/useWebpageSubmit";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { formatDate } from "@/lib/utils";
+import { Database } from "@/types/supabase";
+
+type Webpage = Database["public"]["Tables"]["webpages"]["Row"];
 
 export default function Webpages() {
-  const [selectedWebpage, setSelectedWebpage] = useState<Tables<"webpages"> | null>(null);
+  const [selectedWebpage, setSelectedWebpage] = useState<Webpage | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { data: webpages, refetch } = useQuery({
+  const { data: webpages, refetch, isLoading } = useQuery({
     queryKey: ["webpages"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("webpages")
         .select("*")
         .order("created_at", { ascending: false });
-      
+
       if (error) throw error;
       return data;
     },
   });
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("webpages").delete().eq("id", id);
-    
-    if (error) {
-      toast.error("Could not delete webpage. Please try again.");
-      return;
-    }
-    
-    toast.success("Webpage deleted successfully.");
-    refetch();
-  };
+  const { form } = useWebpageForm({ 
+    webpage: selectedWebpage 
+  });
 
-  const handleEdit = (webpage: Tables<"webpages">) => {
+  const { onSubmit } = useWebpageSubmit({
+    webpage: selectedWebpage,
+    onSuccess: () => {
+      setIsDialogOpen(false);
+      refetch();
+    },
+  });
+
+  const handleEdit = (webpage: Webpage) => {
     setSelectedWebpage(webpage);
     setIsDialogOpen(true);
   };
@@ -58,14 +65,60 @@ export default function Webpages() {
     setIsDialogOpen(true);
   };
 
-  const formatDate = (date: string | null | undefined) => {
-    if (!date) return "-";
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedWebpage(null);
+  };
+
+  const handleDelete = async (webpageId: string) => {
     try {
-      return format(new Date(date), "PPp");
-    } catch {
-      return "-";
+      // Primero, eliminar los tags asociados
+      const { error: deleteTagsError } = await supabase
+        .from("webpage_tags")
+        .delete()
+        .eq("webpage_id", webpageId);
+
+      if (deleteTagsError) {
+        console.error("Error deleting webpage tags:", deleteTagsError);
+        toast.error("Failed to delete webpage tags");
+        return;
+      }
+
+      // Luego, eliminar la página web
+      const { error: deleteWebpageError } = await supabase
+        .from("webpages")
+        .delete()
+        .eq("id", webpageId);
+
+      if (deleteWebpageError) {
+        console.error("Error deleting webpage:", deleteWebpageError);
+        toast.error("Failed to delete webpage");
+        return;
+      }
+
+      toast.success("Webpage deleted successfully");
+      refetch(); // Refresca la lista de webpages después de eliminar
+    } catch (error) {
+      console.error("Error in delete operation:", error);
+      toast.error("An error occurred while deleting the webpage");
     }
   };
+
+  const getStatusBadge = (status: boolean) => {
+    return status ? 
+      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Published</span> :
+      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Draft</span>;
+  };
+
+  const getFormattedDate = (date: string) => {
+    try {
+      return formatDate(date);
+    } catch (e) { return "-"; }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -100,17 +153,10 @@ export default function Webpages() {
                 </Link>
               </TableCell>
               <TableCell>
-                <Badge variant={webpage.is_published ? "default" : "secondary"}>
-                  {webpage.is_published ? (
-                    <Eye className="w-3 h-3 mr-1" />
-                  ) : (
-                    <EyeOff className="w-3 h-3 mr-1" />
-                  )}
-                  {webpage.is_published ? "Published" : "Draft"}
-                </Badge>
+                {getStatusBadge(webpage.is_published)}
               </TableCell>
-              <TableCell>{formatDate(webpage.created_at)}</TableCell>
-              <TableCell>{formatDate(webpage.published_at)}</TableCell>
+              <TableCell>{getFormattedDate(webpage.created_at)}</TableCell>
+              <TableCell>{getFormattedDate(webpage.published_at)}</TableCell>
               <TableCell className="flex gap-2">
                 <Button
                   variant="outline"
@@ -132,93 +178,30 @@ export default function Webpages() {
         </TableBody>
       </Table>
 
-      <WebpageDialog
-        webpage={selectedWebpage}
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onSuccess={() => {
-          refetch();
-          setIsDialogOpen(false);
-        }}
-      />
-      {selectedWebpage && (
-        <div className="prose dark:prose-invert prose-slate prose-lg max-w-none mb-8">
-          <ReactMarkdown
-            components={{
-              h2: ({node, ...props}) => (
-                <h2 
-                  className="text-3xl font-extralight text-purple-600 dark:text-purple-400 mt-12 mb-6 tracking-wider leading-relaxed border-b border-purple-100 dark:border-purple-900 pb-2"
-                  {...props}
-                />
-              ),
-              h3: ({node, ...props}) => (
-                <h3 
-                  className="text-2xl font-light text-gray-800 dark:text-gray-200 mt-8 mb-4 tracking-wide"
-                  {...props}
-                />
-              ),
-              p: ({node, ...props}) => (
-                <p 
-                  className="text-gray-700 dark:text-gray-300 leading-loose mb-6 text-lg font-light tracking-wide"
-                  style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
-                  {...props}
-                />
-              ),
-              a: ({node, ...props}) => (
-                <a 
-                  className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors duration-300 border-b border-purple-200 dark:border-purple-800 hover:border-purple-400 dark:hover:border-purple-600"
-                  {...props}
-                />
-              ),
-              ul: ({node, ...props}) => (
-                <ul 
-                  className="space-y-3 my-8 list-none pl-6"
-                  {...props}
-                />
-              ),
-              li: ({node, ...props}) => (
-                <li 
-                  className="flex items-start space-x-3 text-gray-700 dark:text-gray-300 leading-relaxed font-light before:content-['•'] before:text-purple-500 dark:before:text-purple-400 before:inline-block before:w-4 before:flex-shrink-0 before:font-normal"
-                  {...props}
-                />
-              ),
-              blockquote: ({node, ...props}) => (
-                <blockquote 
-                  className="pl-6 border-l-4 border-purple-200 dark:border-purple-800 italic my-8 text-gray-600 dark:text-gray-400 bg-purple-50 dark:bg-purple-900/10 py-4 pr-4 rounded-r-lg"
-                  {...props}
-                />
-              ),
-              img: ({node, ...props}) => (
-                <img 
-                  className="rounded-xl shadow-lg my-10 w-full hover:shadow-xl transition-shadow duration-300"
-                  {...props}
-                />
-              ),
-              code: ({node, className, children, ...props}) => {
-                const match = /language-(\w+)/.exec(className || '');
-                const isInline = !match;
-                return isInline ? (
-                  <code 
-                    className="bg-purple-50 dark:bg-purple-900/20 px-2 py-0.5 rounded-md text-sm text-purple-700 dark:text-purple-300 font-normal"
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                ) : (
-                  <code 
-                    className="block bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg overflow-x-auto my-6 shadow-sm"
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                );
-              },
-            }}
-          >
-            {selectedWebpage.document_text}
-          </ReactMarkdown>
-        </div>
-      )}
+      <Dialog open={isDialogOpen} onOpenChange={handleCloseDialog}>
+        <DialogContent className="max-w-4xl" aria-labelledby="dialog-title">
+          <h2 id="dialog-title" className="sr-only">{selectedWebpage ? "Edit Web Page" : "Create Web Page"}</h2>
+          <div className="py-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <WebpageFormFields 
+                form={form} 
+                onImageUpload={async (file: File) => {
+                  // Implementar la lógica de carga de imágenes aquí
+                  return "";
+                }} 
+              />
+              <div className="flex justify-end gap-4">
+                <Button variant="outline" onClick={handleCloseDialog}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {selectedWebpage ? 'Update' : 'Create'} Webpage
+                </Button>
+              </div>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

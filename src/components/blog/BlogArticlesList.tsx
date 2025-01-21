@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { BookOpen, User, Tag, Calendar } from "lucide-react";
-import { format } from "date-fns";
 
 export function BlogArticlesList() {
   const { data: articles, isLoading } = useQuery({
     queryKey: ["blog-articles"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("blog_articles")
+        .from("webpages")
         .select(`
           *,
           author:authors(name, avatar_url),
@@ -18,6 +18,7 @@ export function BlogArticlesList() {
           )
         `)
         .eq("is_published", true)
+        .eq("schema_type", "article")
         .order("published_at", { ascending: false });
 
       if (error) throw error;
@@ -37,62 +38,37 @@ export function BlogArticlesList() {
     );
   }
 
+  if (!articles?.length) return null;
+
   return (
-    <div className="space-y-6">
-      {articles?.map((article) => (
-        <article
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      {articles.map((article) => (
+        <Link
           key={article.id}
-          className="bg-white dark:bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6"
+          to={`/${article.slug_url}`}
+          className="group relative bg-card hover:bg-accent rounded-lg overflow-hidden transition-colors"
         >
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <BookOpen className="w-8 h-8 text-violet-300" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-4 mb-3">
-                <div className="flex items-center space-x-2">
-                  <User className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {(article.author as any)?.name || "Anonymous"}
-                  </span>
-                </div>
-                {article.published_at && (
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4 text-gray-500" />
-                    <time 
-                      dateTime={article.published_at}
-                      className="text-sm text-gray-600 dark:text-gray-400"
-                    >
-                      {format(new Date(article.published_at), "MMMM d, yyyy")}
-                    </time>
-                  </div>
-                )}
-              </div>
-              <Link
-                to={article.slug_url}
-                className="block group"
-              >
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3">
-                  {article.meta_title}
-                </h2>
-              </Link>
-              <p className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
-                {article.meta_description}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {(article.article_tags as any)?.map(({ tag }: any) => (
-                  <div
-                    key={tag.id}
-                    className="inline-flex items-center space-x-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-3 py-1 rounded-full"
-                  >
-                    <Tag className="w-3 h-3" />
-                    <span>{tag.name}</span>
-                  </div>
-                ))}
-              </div>
+          {article.meta_altimage && (
+            <img
+              src={article.meta_altimage}
+              alt={article.meta_title}
+              className="w-full h-48 object-cover"
+            />
+          )}
+          <div className="p-4">
+            <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+              {article.meta_title}
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {article.meta_description}
+            </p>
+            <div className="flex justify-between items-center text-sm text-muted-foreground">
+              <time dateTime={article.published_at}>
+                {format(new Date(article.published_at), "MMMM d, yyyy")}
+              </time>
             </div>
           </div>
-        </article>
+        </Link>
       ))}
     </div>
   );

@@ -1,18 +1,24 @@
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { FormData } from "./useArticleForm";
 import { Tables } from "@/integrations/supabase/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { FormData } from "./useArticleForm";
 import { useToast } from "@/components/ui/use-toast";
 
 interface UseArticleSubmitProps {
-  article: Tables<"blog_articles"> | null;
+  article: Tables<"webpages"> | null;
   onSuccess: () => void;
 }
 
 export function useArticleSubmit({ article, onSuccess }: UseArticleSubmitProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const onSubmit = async (data: FormData) => {
+  const handleSubmit = async (data: FormData) => {
     try {
+      setIsSubmitting(true);
+
       const values = {
         meta_title: data.meta_title,
         meta_description: data.meta_description,
@@ -29,14 +35,14 @@ export function useArticleSubmit({ article, onSuccess }: UseArticleSubmitProps) 
 
       if (article) {
         const { error } = await supabase
-          .from("blog_articles")
+          .from("webpages")
           .update(values)
           .eq("id", article.id);
         if (error) throw error;
         articleId = article.id;
       } else {
         const { data: newArticle, error } = await supabase
-          .from("blog_articles")
+          .from("webpages")
           .insert([values])
           .select()
           .single();
@@ -69,6 +75,7 @@ export function useArticleSubmit({ article, onSuccess }: UseArticleSubmitProps) 
         title: "Success",
         description: `Article ${article ? "updated" : "created"} successfully.`,
       });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
       onSuccess();
     } catch (error) {
       console.error("Error saving article:", error);
@@ -77,8 +84,13 @@ export function useArticleSubmit({ article, onSuccess }: UseArticleSubmitProps) 
         title: "Error",
         description: `Could not ${article ? "update" : "create"} article. Please try again.`,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return { onSubmit };
+  return {
+    isSubmitting,
+    handleSubmit,
+  };
 }
