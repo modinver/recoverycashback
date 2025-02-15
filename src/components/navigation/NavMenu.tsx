@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -13,8 +14,13 @@ export const NavMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const menuItems = [
-    { label: 'CashBack', path: '/cashback' },
-    { label: 'Best CashBack Cards UAE 2025', path: '/best-cashback-credit-cards-uae' },
+    { 
+      label: 'CashBack', 
+      path: '/cashback',
+      submenu: [
+        { label: 'Best CashBack Cards UAE 2025', path: '/best-cashback-credit-cards-uae' }
+      ]
+    },
     { label: 'Credit Card', path: '/credit-cards' },
     { label: 'Loans', path: '/loans' },
     { label: 'Banks', path: '/banks' },
@@ -74,26 +80,59 @@ export const NavMenu = () => {
           <div className="hidden md:flex md:items-center md:space-x-6">
             <NavigationMenu.List className="flex gap-6">
               {menuItems.map((item) => (
-                <NavigationMenu.Item key={item.path}>
-                  <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
-                    <NavigationMenu.Link
-                      className={cn(
-                        "relative text-sm font-medium transition-colors hover:text-foreground",
-                        "cursor-pointer py-2 group",
-                        isActive(item.path) ? "text-foreground" : "text-muted-foreground"
-                      )}
-                      onClick={() => navigate(item.path)}
-                    >
-                      {item.label}
-                      <span className="absolute left-0 bottom-0 w-full h-0.5 bg-foreground transform origin-left scale-x-0 transition-transform duration-200 group-hover:scale-x-100" />
-                      {isActive(item.path) && (
-                        <motion.div
-                          className="absolute -bottom-[1px] left-0 right-0 h-0.5 bg-foreground"
-                          layoutId="activeIndicator"
-                        />
-                      )}
-                    </NavigationMenu.Link>
-                  </motion.div>
+                <NavigationMenu.Item key={item.path} className="relative">
+                  {item.submenu ? (
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger asChild>
+                        <motion.button
+                          className={cn(
+                            "flex items-center gap-1 text-sm font-medium transition-colors hover:text-foreground py-2",
+                            isActive(item.path) ? "text-foreground" : "text-muted-foreground"
+                          )}
+                          whileHover={{ y: -2 }}
+                        >
+                          {item.label}
+                          <ChevronDown className="h-4 w-4" />
+                        </motion.button>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Portal>
+                        <DropdownMenu.Content
+                          className="z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                          sideOffset={5}
+                        >
+                          {item.submenu.map((subItem) => (
+                            <DropdownMenu.Item
+                              key={subItem.path}
+                              className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                              onClick={() => navigate(subItem.path)}
+                            >
+                              {subItem.label}
+                            </DropdownMenu.Item>
+                          ))}
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Portal>
+                    </DropdownMenu.Root>
+                  ) : (
+                    <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                      <NavigationMenu.Link
+                        className={cn(
+                          "relative text-sm font-medium transition-colors hover:text-foreground",
+                          "cursor-pointer py-2 group",
+                          isActive(item.path) ? "text-foreground" : "text-muted-foreground"
+                        )}
+                        onClick={() => navigate(item.path)}
+                      >
+                        {item.label}
+                        <span className="absolute left-0 bottom-0 w-full h-0.5 bg-foreground transform origin-left scale-x-0 transition-transform duration-200 group-hover:scale-x-100" />
+                        {isActive(item.path) && (
+                          <motion.div
+                            className="absolute -bottom-[1px] left-0 right-0 h-0.5 bg-foreground"
+                            layoutId="activeIndicator"
+                          />
+                        )}
+                      </NavigationMenu.Link>
+                    </motion.div>
+                  )}
                 </NavigationMenu.Item>
               ))}
             </NavigationMenu.List>
@@ -155,22 +194,45 @@ export const NavMenu = () => {
               >
                 <div className="px-4 py-3 space-y-3">
                   {menuItems.map((item) => (
-                    <motion.a
-                      key={item.path}
-                      className={cn(
-                        "block px-3 py-2 rounded-md text-base font-medium",
-                        isActive(item.path)
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    <React.Fragment key={item.path}>
+                      <motion.button
+                        className={cn(
+                          "block w-full px-3 py-2 rounded-md text-base font-medium text-left",
+                          isActive(item.path)
+                            ? "bg-accent text-accent-foreground"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        )}
+                        onClick={() => {
+                          if (!item.submenu) {
+                            navigate(item.path);
+                            setIsMenuOpen(false);
+                          }
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="flex items-center justify-between">
+                          {item.label}
+                          {item.submenu && <ChevronDown className="h-4 w-4" />}
+                        </div>
+                      </motion.button>
+                      {item.submenu && (
+                        <div className="pl-4 space-y-2">
+                          {item.submenu.map((subItem) => (
+                            <motion.button
+                              key={subItem.path}
+                              className="block w-full px-3 py-2 rounded-md text-sm font-medium text-left text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                              onClick={() => {
+                                navigate(subItem.path);
+                                setIsMenuOpen(false);
+                              }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              {subItem.label}
+                            </motion.button>
+                          ))}
+                        </div>
                       )}
-                      onClick={() => {
-                        navigate(item.path);
-                        setIsMenuOpen(false);
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {item.label}
-                    </motion.a>
+                    </React.Fragment>
                   ))}
                   <div className="flex flex-col gap-3 pt-3 border-t border-border">
                     <div className="grid grid-cols-2 gap-2">
