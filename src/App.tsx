@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import BestCashbackCards from "./pages/BestCashbackCards";
 import StaticPage from "./pages/StaticPage";
@@ -33,7 +34,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/robots.txt" element={<Robots />} />
-        <Route path="/best-cashback-credit-cards-uae" element={<BestCashbackCards />} />
+        <Route path="/best-cashback-credit-cards-uae" element={<AppLayout><BestCashbackCards /></AppLayout>} />
       </Routes>
     </Router>
   );
