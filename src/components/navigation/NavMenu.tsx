@@ -14,6 +14,7 @@ export const NavMenu = () => {
 
   const menuItems = [
     { label: 'CashBack', path: '/cashback' },
+    { label: 'Best CashBack Cards UAE 2025', path: '/best-cashback-credit-cards-uae' },
     { label: 'Credit Card', path: '/credit-cards' },
     { label: 'Loans', path: '/loans' },
     { label: 'Banks', path: '/banks' },
@@ -23,7 +24,6 @@ export const NavMenu = () => {
     return location.pathname === path;
   };
 
-  // Cerrar el menú móvil cuando cambia la ruta
   React.useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
@@ -32,7 +32,6 @@ export const NavMenu = () => {
     <div className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 z-50">
       <div className="container mx-auto px-4">
         <NavigationMenu.Root className="relative flex h-16 items-center justify-between">
-          {/* Logo/Brand */}
           <motion.div 
             className="flex-shrink-0 cursor-pointer"
             whileHover={{ scale: 1.05 }}
@@ -42,7 +41,6 @@ export const NavMenu = () => {
             <Logo />
           </motion.div>
 
-          {/* Mobile menu button */}
           <motion.button
             className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -73,7 +71,6 @@ export const NavMenu = () => {
             </AnimatePresence>
           </motion.button>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-6">
             <NavigationMenu.List className="flex gap-6">
               {menuItems.map((item) => (
@@ -147,7 +144,6 @@ export const NavMenu = () => {
             </div>
           </div>
 
-          {/* Mobile Navigation */}
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
