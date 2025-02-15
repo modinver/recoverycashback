@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -13,12 +14,12 @@ export function BlogArticlesList() {
         .select(`
           *,
           author:authors(name, avatar_url),
-          article_tags(
+          webpage_tags(
             tag:tags(*)
           )
         `)
         .eq("is_published", true)
-        .eq("schema_type", "article")
+        .eq("shcema_type", "article")
         .order("published_at", { ascending: false });
 
       if (error) throw error;
