@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Typing Centers UAE — TypingCenterNear.me</title>
+  <meta name="description" content="Search typing centers across all UAE emirates by name, area or service.">
+  <link rel="canonical" href="https://typingcenternear.me/search/">
+  <meta name="robots" content="noindex, follow">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <script>
+    window.SUPABASE_URL = 'https://YOUR-SUPABASE-SELF-HOSTED-URL';
+    window.SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
+  </script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar__inner">
+    <a href="/" class="navbar__logo">
+      <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0e7c6b"/><path d="M8 11h16M8 16h12M8 21h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      TypingCenterNear.me
+    </a>
+    <nav class="navbar__nav" id="main-nav">
+      <a href="/typing-center-dubai/">Dubai</a>
+      <a href="/typing-center-abu-dhabi/">Abu Dhabi</a>
+      <a href="/blog/">Blog</a>
+    </nav>
+    <button class="navbar__hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div style="background:#f8fafc;padding:40px 16px;border-bottom:1px solid #e5e7eb">
+  <div class="container" style="max-width:700px">
+    <h1 style="font-size:1.75rem;font-weight:800;margin-bottom:16px">Search Typing Centers</h1>
+    <div class="search-box" style="max-width:100%">
+      <input type="text" id="search-input" placeholder="Center name, area, or emirate…" style="flex:1" aria-label="Search">
+      <button id="search-btn">Search</button>
+    </div>
+    <div class="filters" style="margin-top:16px">
+      <button class="filter-btn active" data-emirate="">All Emirates</button>
+      <button class="filter-btn" data-emirate="dubai">Dubai</button>
+      <button class="filter-btn" data-emirate="abu-dhabi">Abu Dhabi</button>
+      <button class="filter-btn" data-emirate="sharjah">Sharjah</button>
+      <button class="filter-btn" data-emirate="ajman">Ajman</button>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <p id="search-label" style="margin-bottom:24px;color:#6b7280;font-size:0.9rem"></p>
+    <div class="centers-grid" id="search-results">
+      <p style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#9ca3af">
+        Enter a search term to find typing centers
+      </p>
+    </div>
+    <div id="search-pagination" style="display:flex;justify-content:center;gap:8px;margin-top:40px"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <div class="footer__logo">🖨️ TypingCenterNear.me</div>
+      <p class="footer__desc">UAE Typing Center Directory</p>
+    </div>
+    <div>
+      <div class="footer__col-title">Emirates</div>
+      <div class="footer__links">
+        <a href="/typing-center-dubai/">Dubai</a>
+        <a href="/typing-center-abu-dhabi/">Abu Dhabi</a>
+        <a href="/typing-center-sharjah/">Sharjah</a>
+        <a href="/typing-center-ajman/">Ajman</a>
+        <a href="/typing-center-ras-al-khaimah/">Ras Al Khaimah</a>
+        <a href="/typing-center-fujairah/">Fujairah</a>
+        <a href="/typing-center-umm-al-quwain/">Umm Al Quwain</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom"><span>© 2024 TypingCenterNear.me</span></div>
+</footer>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="/assets/js/supabase.js"></script>
+<script src="/assets/js/main.js"></script>
+<script>
+// Search page logic
+let searchPage = 1;
+let activeEmirate = '';
+const SEARCH_SIZE = 12;
+
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  const resultsEl = document.getElementById('search-results');
+  const labelEl = document.getElementById('search-label');
+
+  if (!q && !activeEmirate) {
+    resultsEl.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:60px;color:#9ca3af">Enter a search term</p>';
+    return;
+  }
+
+  resultsEl.innerHTML = Array(6).fill('<div class="skeleton skeleton--card" style="border-radius:12px"></div>').join('');
+
+  const from = (searchPage - 1) * SEARCH_SIZE;
+  let query = SupabaseClient.from('typing_centers')
+    .select('id,slug,name,emirate,area,rating,review_count,services,photos,is_featured')
+    .eq('is_published', 'true')
+    .order('rating', { ascending: false })
+    .range(from, from + SEARCH_SIZE - 1);
+
+  if (q)             query = query.ilike('name', `%${q}%`);
+  if (activeEmirate) query = query.eq('emirate', activeEmirate);
+
+  const { data } = await query;
+
+  if (labelEl) labelEl.textContent = q ? `Results for "${q}"` : `Centers in ${slugToTitle(activeEmirate)}`;
+
+  if (!data || !data.length) {
+    resultsEl.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:60px;color:#9ca3af">No centers found. Try a different search.</p>';
+    return;
+  }
+
+  resultsEl.innerHTML = data.map(centerCardHTML).join('');
+
+  // Pagination
+  const pagEl = document.getElementById('search-pagination');
+  if (pagEl) {
+    const hasNext = data.length === SEARCH_SIZE;
+    const hasPrev = searchPage > 1;
+    if (!hasNext && !hasPrev) { pagEl.innerHTML = ''; return; }
+    pagEl.innerHTML = `
+      <button class="pagination__btn" ${hasPrev ? '' : 'disabled'} onclick="searchPage--;doSearch()">← Prev</button>
+      <span style="padding:0 12px;color:#6b7280">Page ${searchPage}</span>
+      <button class="pagination__btn" ${hasNext ? '' : 'disabled'} onclick="searchPage++;doSearch()">Next →</button>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Pre-fill from URL
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q') || '';
+  const s = params.get('s') || '';
+  const input = document.getElementById('search-input');
+  if (input && q) { input.value = q; }
+  if (s) activeEmirate = s;
+
+  if (q || s) doSearch();
+
+  document.getElementById('search-btn')?.addEventListener('click', () => { searchPage = 1; doSearch(); });
+  document.getElementById('search-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') { searchPage = 1; doSearch(); } });
+
+  document.querySelectorAll('.filter-btn[data-emirate]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn[data-emirate]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeEmirate = btn.dataset.emirate;
+      searchPage = 1;
+      doSearch();
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Centers Near Me UAE — Find Government Typing Services | TypingCenterNear.me</title>
+  <meta name="description" content="Find the nearest typing center in Dubai, Abu Dhabi, Sharjah and all UAE emirates. Emirates ID, visa, Ejari, DHA medical and government document services.">
+  <meta name="keywords" content="typing center UAE, typing center Dubai, Emirates ID typing, visa typing center, ejari typing, government typing services UAE">
+  <link rel="canonical" href="https://typingcenternear.me/">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Typing Centers Near Me UAE — TypingCenterNear.me">
+  <meta property="og:description" content="Find the nearest typing center in UAE. Emirates ID, visa, Ejari and government services.">
+  <meta property="og:url" content="https://typingcenternear.me/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_AE">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Typing Centers Near Me UAE">
+  <meta name="twitter:description" content="Find the nearest typing center in UAE. Emirates ID, visa, Ejari and government services.">
+
+  <!-- Critical CSS inline -->
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .loading-bar { height: 3px; background: linear-gradient(90deg, #0e7c6b, #15a88f); animation: load 1s ease forwards; }
+    @keyframes load { from { width: 0 } to { width: 60% } }
+  </style>
+  <div class="loading-bar"></div>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+  <!-- Supabase config -->
+  <script>
+    window.SUPABASE_URL = 'https://YOUR-SUPABASE-SELF-HOSTED-URL';
+    window.SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
+  </script>
+
+  <!-- Schema: WebSite + SearchAction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TypingCenterNear.me",
+    "url": "https://typingcenternear.me",
+    "description": "Find typing centers near you in UAE. Emirates ID, visa, Ejari and government document services.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://typingcenternear.me/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar__inner">
+    <a href="/" class="navbar__logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="8" fill="#0e7c6b"/><path d="M8 11h16M8 16h12M8 21h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      TypingCenterNear.me
+    </a>
+    <nav class="navbar__nav" id="main-nav">
+      <a href="/typing-center-dubai/">Dubai</a>
+      <a href="/typing-center-abu-dhabi/">Abu Dhabi</a>
+      <a href="/typing-center-sharjah/">Sharjah</a>
+      <a href="/blog/">Blog</a>
+      <a href="/search/" class="navbar__cta">🔍 Find Center</a>
+    </nav>
+    <button class="navbar__hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__badge">🇦🇪 All 7 UAE Emirates</div>
+  <h1 class="hero__title">Find a Typing Center<br>Near You in UAE</h1>
+  <p class="hero__subtitle">Emirates ID renewal, visa typing, Ejari registration and all government document services — fast and reliable.</p>
+
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="Search by center name or area…" autocomplete="off" aria-label="Search typing centers">
+    <button id="search-btn">Search</button>
+  </div>
+
+  <div class="hero__stats">
+    <div class="hero__stat"><strong>500+</strong><span>Typing Centers</span></div>
+    <div class="hero__stat"><strong>7</strong><span>Emirates</span></div>
+    <div class="hero__stat"><strong>15+</strong><span>Services</span></div>
+  </div>
+</section>
+
+<!-- EMIRATE GRID -->
+<section class="section section--gray">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Browse by Emirate</h2>
+      <p class="section__subtitle">Select your emirate to find typing centers near you</p>
+    </div>
+    <div class="emirate-grid" id="emirate-grid">
+      <!-- Rendered by main.js -->
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+      <div class="skeleton" style="height:110px;border-radius:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED CENTERS -->
+<section class="section">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">⭐ Top Rated Centers</h2>
+      <p class="section__subtitle">Highest rated typing centers across the UAE</p>
+    </div>
+    <div class="centers-grid" id="featured-centers">
+      <!-- Rendered by main.js -->
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="/typing-center-dubai/" class="btn btn--outline">View All Centers →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES SECTION -->
+<section class="section section--gray">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Services Available</h2>
+      <p class="section__subtitle">UAE government document services at typing centers</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:900px;margin:0 auto">
+      <div style="background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e5e7eb">
+        <div style="font-size:2rem;margin-bottom:8px">🪪</div>
+        <strong>Emirates ID</strong>
+        <p style="font-size:0.8rem;color:#6b7280;margin-top:4px">New application &amp; renewal</p>
+      </div>
+      <div style="background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e5e7eb">
+        <div style="font-size:2rem;margin-bottom:8px">✈️</div>
+        <strong>Visa Typing</strong>
+        <p style="font-size:0.8rem;color:#6b7280;margin-top:4px">Residence &amp; visit visas</p>
+      </div>
+      <div style="background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e5e7eb">
+        <div style="font-size:2rem;margin-bottom:8px">🏠</div>
+        <strong>Ejari</strong>
+        <p style="font-size:0.8rem;color:#6b7280;margin-top:4px">Tenancy contract registration</p>
+      </div>
+      <div style="background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e5e7eb">
+        <div style="font-size:2rem;margin-bottom:8px">🏥</div>
+        <strong>DHA Medical</strong>
+        <p style="font-size:0.8rem;color:#6b7280;margin-top:4px">Medical fitness typing</p>
+      </div>
+      <div style="background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e5e7eb">
+        <div style="font-size:2rem;margin-bottom:8px">👷</div>
+        <strong>Tasheel / MOHRE</strong>
+        <p style="font-size:0.8rem;color:#6b7280;margin-top:4px">Labour &amp; employment services</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="section">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">UAE Government Guides</h2>
+      <p class="section__subtitle">Step-by-step guides for visa, Emirates ID and more</p>
+    </div>
+    <div class="blog-grid" id="blog-grid">
+      <!-- Rendered by main.js -->
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="/blog/" class="btn btn--outline">View All Articles →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <div class="footer__logo">🖨️ TypingCenterNear.me</div>
+      <p class="footer__desc">The most complete directory of typing centers in UAE. Find Emirates ID, visa, Ejari and government document services near you.</p>
+    </div>
+    <div>
+      <div class="footer__col-title">Emirates</div>
+      <div class="footer__links">
+        <a href="/typing-center-dubai/">Dubai</a>
+        <a href="/typing-center-abu-dhabi/">Abu Dhabi</a>
+        <a href="/typing-center-sharjah/">Sharjah</a>
+        <a href="/typing-center-ajman/">Ajman</a>
+        <a href="/typing-center-ras-al-khaimah/">Ras Al Khaimah</a>
+        <a href="/typing-center-fujairah/">Fujairah</a>
+        <a href="/typing-center-umm-al-quwain/">Umm Al Quwain</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer__col-title">Services</div>
+      <div class="footer__links">
+        <a href="/search/?s=emirates-id">Emirates ID</a>
+        <a href="/search/?s=visa">Visa Typing</a>
+        <a href="/search/?s=ejari">Ejari</a>
+        <a href="/search/?s=dha-medical">DHA Medical</a>
+        <a href="/search/?s=tasheel">Tasheel</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer__col-title">Info</div>
+      <div class="footer__links">
+        <a href="/blog/">Blog &amp; Guides</a>
+        <a href="/search/">Search</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2024 TypingCenterNear.me — UAE Typing Center Directory</span>
+    <span>Not affiliated with any government entity</span>
+  </div>
+</footer>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="/assets/js/supabase.js"></script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

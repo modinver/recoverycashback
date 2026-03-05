@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — TypingCenterNear.me</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <script>
+    // Loaded from Settings (localStorage) — override here if needed
+    window.SUPABASE_URL = '';
+    window.SUPABASE_ANON_KEY = '';
+  </script>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo__icon">🖨️</div>
+      <div class="login-logo__title">TypingCenterNear.me</div>
+      <div class="login-logo__sub">Admin Panel</div>
+    </div>
+    <div id="login-error" class="login-error" style="display:none"></div>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="login-email" class="form-control" placeholder="admin@example.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" id="login-btn" class="adm-btn adm-btn--primary" style="width:100%;justify-content:center;padding:12px">Sign In</button>
+    </form>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="sidebar">
+    <a href="/" class="sidebar-brand" target="_blank">
+      <div class="sidebar-brand__icon">🖨️</div>
+      <div>
+        <div class="sidebar-brand__text">TypingCenterNear</div>
+        <div class="sidebar-brand__sub">Admin Panel v2.0</div>
+      </div>
+    </a>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav__section">
+        <div class="sidebar-nav__label">Overview</div>
+        <button class="sidebar-nav__item active" data-module="dashboard"><span class="icon">📊</span> Dashboard</button>
+      </div>
+      <div class="sidebar-nav__section">
+        <div class="sidebar-nav__label">Content</div>
+        <button class="sidebar-nav__item" data-module="centers"><span class="icon">🏢</span> Typing Centers</button>
+        <button class="sidebar-nav__item" data-module="blog"><span class="icon">📝</span> Blog & Articles</button>
+        <button class="sidebar-nav__item" data-module="ai"><span class="icon">🤖</span> AI Generator</button>
+      </div>
+      <div class="sidebar-nav__section">
+        <div class="sidebar-nav__label">Tools</div>
+        <button class="sidebar-nav__item" data-module="import"><span class="icon">📥</span> Import Data</button>
+        <button class="sidebar-nav__item" data-module="seo"><span class="icon">🔍</span> SEO Manager</button>
+        <button class="sidebar-nav__item" data-module="sitemap"><span class="icon">🗺️</span> Sitemap</button>
+      </div>
+      <div class="sidebar-nav__section">
+        <div class="sidebar-nav__label">Config</div>
+        <button class="sidebar-nav__item" data-module="settings"><span class="icon">⚙️</span> Settings</button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user__avatar">A</div>
+        <div class="sidebar-user__info">
+          <div class="sidebar-user__email" id="user-email">admin@example.com</div>
+        </div>
+        <button class="btn-logout" id="logout-btn" title="Sign out">↩</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <h1 class="admin-header__title" id="header-title">📊 Dashboard</h1>
+      <div class="admin-header__actions">
+        <a href="/" target="_blank" class="adm-btn adm-btn--outline adm-btn--sm">🌐 View Site</a>
+        <button class="adm-btn adm-btn--primary adm-btn--sm" id="new-center-btn" onclick="openCenterModal()">+ New Center</button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="module-page active">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--green">🏢</div>
+            <div><div class="stat-card__value" id="stat-total">—</div><div class="stat-card__label">Total Centers</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--blue">✅</div>
+            <div><div class="stat-card__value" id="stat-published">—</div><div class="stat-card__label">Published</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--amber">⭐</div>
+            <div><div class="stat-card__value" id="stat-featured">—</div><div class="stat-card__label">Featured</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--purple">📝</div>
+            <div><div class="stat-card__value" id="stat-posts">—</div><div class="stat-card__label">Blog Posts</div></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="table-card">
+            <div class="table-card__header">
+              <span class="table-card__title">Centers by Emirate</span>
+            </div>
+            <div style="padding:20px" id="emirate-dist">Loading…</div>
+          </div>
+          <div class="table-card">
+            <div class="table-card__header">
+              <span class="table-card__title">Quick Actions</span>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:10px">
+              <button class="adm-btn adm-btn--primary" onclick="navigate('centers');setTimeout(()=>openCenterModal(),300)">➕ Add Typing Center</button>
+              <button class="adm-btn adm-btn--outline" onclick="navigate('blog');setTimeout(()=>openPostModal(),300)">✍️ Write New Article</button>
+              <button class="adm-btn adm-btn--outline" onclick="navigate('ai')">🤖 Generate Content with AI</button>
+              <button class="adm-btn adm-btn--outline" onclick="navigate('import')">📥 Import from CSV/XML</button>
+              <button class="adm-btn adm-btn--outline" onclick="navigate('sitemap')">🗺️ Generate Sitemap</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TYPING CENTERS -->
+      <div id="page-centers" class="module-page">
+        <div class="table-card">
+          <div class="table-card__header">
+            <span class="table-card__title">All Typing Centers</span>
+            <div class="table-search">
+              <input type="text" id="center-search" placeholder="Search by name…" style="width:200px">
+              <select id="center-emirate-filter">
+                <option value="">All Emirates</option>
+                <option value="dubai">Dubai</option>
+                <option value="abu-dhabi">Abu Dhabi</option>
+                <option value="sharjah">Sharjah</option>
+                <option value="ajman">Ajman</option>
+                <option value="ras-al-khaimah">Ras Al Khaimah</option>
+                <option value="fujairah">Fujairah</option>
+                <option value="umm-al-quwain">Umm Al Quwain</option>
+              </select>
+              <button class="adm-btn adm-btn--primary adm-btn--sm" onclick="openCenterModal()">+ Add Center</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name / Slug</th>
+                  <th>Emirate</th>
+                  <th>Area</th>
+                  <th>Rating</th>
+                  <th>Status</th>
+                  <th>Featured</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="centers-tbody">
+                <tr><td colspan="7" style="text-align:center;padding:40px;color:#6b7280">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOG -->
+      <div id="page-blog" class="module-page">
+        <div class="table-card">
+          <div class="table-card__header">
+            <span class="table-card__title">Blog Articles</span>
+            <div class="table-search">
+              <button class="adm-btn adm-btn--primary adm-btn--sm" onclick="openPostModal()">+ New Article</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Title / Slug</th>
+                  <th>Status</th>
+                  <th>Source</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="blog-tbody">
+                <tr><td colspan="5" style="text-align:center;padding:40px;color:#6b7280">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI GENERATOR -->
+      <div id="page-ai" class="module-page">
+        <div class="ai-panel">
+          <div class="ai-panel__header">
+            <div class="ai-panel__title">🤖 AI Content Generator</div>
+            <div class="ai-panel__subtitle">Provider: <span id="ai-provider-display">claude / claude-sonnet-4-20250514</span></div>
+          </div>
+          <div class="ai-panel__body">
+            <div class="ai-mode-tabs">
+              <button class="ai-mode-tab active" data-mode="keyword">📝 Keyword → Article</button>
+              <button class="ai-mode-tab" data-mode="video">🎬 Video URL → Article</button>
+              <button class="ai-mode-tab" data-mode="transcript">📄 Transcript → Article</button>
+              <button class="ai-mode-tab" data-mode="notes">📋 Notes → Article</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Target Keyword <span class="required">*</span></label>
+              <input type="text" id="ai-keyword" class="form-control" placeholder="e.g. how to renew emirates id 2024">
+            </div>
+
+            <div class="form-group--half" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="form-group">
+                <label class="form-label">Length (words)</label>
+                <select id="ai-length" class="form-control">
+                  <option value="800">~800 words</option>
+                  <option value="1200" selected>~1200 words</option>
+                  <option value="1800">~1800 words</option>
+                  <option value="2500">~2500 words</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tone</label>
+                <select id="ai-tone" class="form-control">
+                  <option value="informative-guide">Informative Guide</option>
+                  <option value="conversational">Conversational</option>
+                  <option value="step-by-step">Step by Step</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Video URL <span style="color:#94a3b8">(optional)</span></label>
+              <input type="url" id="ai-video-url" class="form-control" placeholder="https://youtube.com/watch?v=…">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Transcript / Notes <span style="color:#94a3b8">(optional — paste text here)</span></label>
+              <textarea id="ai-transcript" class="form-control" rows="4" placeholder="Paste video transcript or notes here…"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Additional Notes</label>
+              <textarea id="ai-notes" class="form-control" rows="2" placeholder="Any specific points to include…"></textarea>
+            </div>
+
+            <button class="adm-btn adm-btn--primary" id="ai-gen-btn" onclick="runAiGenerate()" style="width:100%;justify-content:center;padding:12px">
+              🚀 Generate Article
+            </button>
+
+            <div id="ai-result" class="ai-result" style="display:none"></div>
+          </div>
+        </div>
+
+        <script>
+          // Show/hide result div
+          const origRun = window.runAiGenerate;
+          document.getElementById('ai-gen-btn')?.addEventListener('click', () => {
+            document.getElementById('ai-result').style.display = 'block';
+          });
+        </script>
+      </div>
+
+      <!-- IMPORT -->
+      <div id="page-import" class="module-page">
+        <div class="table-card" style="max-width:700px">
+          <div class="table-card__header">
+            <span class="table-card__title">Import Typing Centers</span>
+          </div>
+          <div style="padding:24px">
+            <p style="font-size:0.875rem;color:#64748b;margin-bottom:20px">
+              Upload a CSV or JSON file with typing center data. Required columns: <code>name</code>, <code>slug</code>, <code>emirate</code>, <code>address</code>.
+            </p>
+
+            <div id="import-dropzone" class="drop-zone">
+              <div class="drop-zone__icon">📁</div>
+              <div class="drop-zone__text">Drop CSV or JSON file here</div>
+              <div class="drop-zone__hint">or click to browse — max 10MB</div>
+              <input type="file" id="import-file" accept=".csv,.json,.xml" style="display:none">
+            </div>
+
+            <div id="import-preview" style="margin-top:20px"></div>
+
+            <div id="import-progress" style="display:none;margin-top:16px">
+              <div style="font-size:0.85rem;margin-bottom:6px;color:#64748b">Importing: <span id="import-count">0</span></div>
+              <div class="progress-bar"><div class="progress-bar__fill" id="import-progress-fill" style="width:0%"></div></div>
+            </div>
+
+            <div style="margin-top:20px">
+              <button class="adm-btn adm-btn--outline adm-btn--sm" onclick="downloadCSVTemplate()">⬇️ Download CSV Template</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO MANAGER -->
+      <div id="page-seo" class="module-page">
+        <div class="table-card">
+          <div class="table-card__header">
+            <span class="table-card__title">SEO Audit</span>
+            <button class="adm-btn adm-btn--primary adm-btn--sm" onclick="loadSeoAudit()">🔄 Run Audit</button>
+          </div>
+          <div style="padding:20px" id="seo-issues">
+            <p style="color:#64748b">Click "Run Audit" to check all pages for SEO issues.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SITEMAP -->
+      <div id="page-sitemap" class="module-page">
+        <div class="table-card" style="max-width:700px">
+          <div class="table-card__header">
+            <span class="table-card__title">Sitemap Generator</span>
+          </div>
+          <div style="padding:24px">
+            <p style="font-size:0.875rem;color:#64748b;margin-bottom:20px">
+              Generate a complete XML sitemap including all published typing centers, city pages, blog articles and static pages.
+            </p>
+            <button class="adm-btn adm-btn--primary" id="gen-sitemap-btn" onclick="generateSitemap()" style="margin-bottom:16px">
+              🗺️ Generate Sitemap
+            </button>
+            <p style="font-size:0.8rem;color:#94a3b8">After downloading, upload <code>sitemap.xml</code> to your <code>/public/</code> directory.</p>
+            <pre id="sitemap-preview" style="margin-top:20px;background:#f8fafc;padding:16px;border-radius:8px;font-size:0.75rem;overflow:auto;max-height:300px;border:1px solid #e2e8f0"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="page-settings" class="module-page">
+        <div class="table-card" style="max-width:600px">
+          <div class="table-card__header">
+            <span class="table-card__title">Configuration</span>
+          </div>
+          <div style="padding:24px">
+            <div class="form-group">
+              <label class="form-label">Supabase URL <span class="required">*</span></label>
+              <input type="url" id="setting-supabase_url" class="form-control" placeholder="https://your-self-hosted-supabase.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Supabase Anon Key <span class="required">*</span></label>
+              <input type="text" id="setting-supabase_anon_key" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…">
+            </div>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
+            <div class="form-group">
+              <label class="form-label">AI Provider</label>
+              <select id="setting-ai_provider" class="form-control">
+                <option value="claude">Claude (Anthropic)</option>
+                <option value="openai">OpenAI</option>
+                <option value="openrouter">OpenRouter</option>
+                <option value="ollama">Ollama (Local)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">AI Model</label>
+              <input type="text" id="setting-ai_model" class="form-control" placeholder="claude-sonnet-4-20250514">
+            </div>
+            <div class="form-group">
+              <label class="form-label">AI API Key <span class="form-label hint">(stored in localStorage only)</span></label>
+              <input type="password" id="setting-ai_api_key" class="form-control" placeholder="sk-ant-api03-…">
+            </div>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
+            <div class="form-group">
+              <label class="form-label">Site URL</label>
+              <input type="url" id="setting-site_url" class="form-control" placeholder="https://typingcenternear.me">
+            </div>
+            <button class="adm-btn adm-btn--primary" onclick="saveSettings()" style="width:100%;justify-content:center;padding:12px">💾 Save Settings</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-main -->
+</div><!-- /admin-app -->
+
+<!-- MODAL: Center -->
+<div id="center-modal" class="modal-overlay" style="display:none">
+  <div class="modal modal--wide">
+    <div class="modal__header">
+      <span class="modal__title" id="center-modal-title">Add Typing Center</span>
+      <button class="modal__close" onclick="closeModal('center-modal')">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group--half" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Name <span class="required">*</span></label>
+          <input type="text" id="cf-name" class="form-control" placeholder="Al Masa Typing Center">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Slug <span class="required">*</span></label>
+          <input type="text" id="cf-slug" class="form-control" placeholder="al-masa-typing-center">
+        </div>
+      </div>
+      <div class="form-group--half" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Emirate <span class="required">*</span></label>
+          <select id="cf-emirate" class="form-control">
+            <option value="">Select emirate</option>
+            <option value="dubai">Dubai</option>
+            <option value="abu-dhabi">Abu Dhabi</option>
+            <option value="sharjah">Sharjah</option>
+            <option value="ajman">Ajman</option>
+            <option value="ras-al-khaimah">Ras Al Khaimah</option>
+            <option value="fujairah">Fujairah</option>
+            <option value="umm-al-quwain">Umm Al Quwain</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Area / Neighbourhood</label>
+          <input type="text" id="cf-area" class="form-control" placeholder="Al Barsha, Deira…">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Address</label>
+        <input type="text" id="cf-address" class="form-control" placeholder="Al Barsha, Sheikh Zayed Road, Dubai">
+      </div>
+      <div class="form-group--third" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" id="cf-phone" class="form-control" placeholder="+971 4 555 1234">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input type="tel" id="cf-whatsapp" class="form-control" placeholder="+971 50 555 1234">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="cf-email" class="form-control" placeholder="info@center.ae">
+        </div>
+      </div>
+      <div class="form-group--third" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Latitude</label>
+          <input type="number" id="cf-lat" class="form-control" placeholder="25.1072" step="any">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Longitude</label>
+          <input type="number" id="cf-lng" class="form-control" placeholder="55.1562" step="any">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price Range</label>
+          <select id="cf-price_range" class="form-control">
+            <option value="">—</option>
+            <option value="$">$ Affordable</option>
+            <option value="$$">$$ Moderate</option>
+            <option value="$$$">$$$ Premium</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Services <span class="form-label hint">(comma-separated)</span></label>
+        <input type="text" id="cf-services" class="form-control" placeholder="emirates-id, visa, ejari, dha-medical, tasheel">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="cf-description" class="form-control" rows="3" placeholder="Description of the center and its services…"></textarea>
+      </div>
+      <div class="form-group--half" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Meta Title <span class="form-label hint">(max 60)</span></label>
+          <input type="text" id="cf-meta_title" class="form-control" maxlength="60">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meta Description <span class="form-label hint">(max 155)</span></label>
+          <input type="text" id="cf-meta_description" class="form-control" maxlength="155">
+        </div>
+      </div>
+      <div style="display:flex;gap:20px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer">
+          <input type="checkbox" id="cf-published" checked> Published (visible on site)
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer">
+          <input type="checkbox" id="cf-featured"> ⭐ Featured (shown on homepage)
+        </label>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="adm-btn adm-btn--outline" onclick="closeModal('center-modal')">Cancel</button>
+      <button class="adm-btn adm-btn--primary" onclick="saveCenterModal()">💾 Save Center</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Post / Editor -->
+<div id="post-modal" class="modal-overlay" style="display:none">
+  <div class="modal modal--wide">
+    <div class="modal__header">
+      <span class="modal__title" id="post-modal-title">New Article</span>
+      <button class="modal__close" onclick="closeModal('post-modal')">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label class="form-label">Title <span class="required">*</span></label>
+        <input type="text" id="pf-title" class="form-control" placeholder="How to Renew Your Emirates ID in 2024">
+      </div>
+      <div class="form-group--half" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Slug <span class="required">*</span></label>
+          <input type="text" id="pf-slug" class="form-control" placeholder="how-to-renew-emirates-id-2024">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Featured Image URL</label>
+          <input type="url" id="pf-featured_image" class="form-control" placeholder="https://…">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Excerpt</label>
+        <textarea id="pf-excerpt" class="form-control" rows="2" placeholder="Short summary shown in listings (2-3 sentences)"></textarea>
+      </div>
+
+      <!-- WYSIWYG Editor -->
+      <div class="form-group">
+        <label class="form-label">Content</label>
+        <div class="editor-wrapper">
+          <div class="editor-toolbar">
+            <button onclick="editorCmd('bold')" title="Bold"><strong>B</strong></button>
+            <button onclick="editorCmd('italic')" title="Italic"><em>I</em></button>
+            <button onclick="editorCmd('underline')" title="Underline"><u>U</u></button>
+            <div class="sep"></div>
+            <button onclick="editorCmd('formatBlock','H2')" title="Heading 2">H2</button>
+            <button onclick="editorCmd('formatBlock','H3')" title="Heading 3">H3</button>
+            <button onclick="editorCmd('formatBlock','P')" title="Paragraph">P</button>
+            <div class="sep"></div>
+            <button onclick="editorCmd('insertUnorderedList')" title="Bullet list">• List</button>
+            <button onclick="editorCmd('insertOrderedList')" title="Ordered list">1. List</button>
+            <button onclick="editorCmd('formatBlock','BLOCKQUOTE')" title="Quote">❝</button>
+            <div class="sep"></div>
+            <button onclick="insertEditorLink()" title="Insert link">🔗</button>
+            <button onclick="insertEditorImage()" title="Insert image">🖼️</button>
+            <div class="sep"></div>
+            <button class="toggle-html-btn" id="toggle-html-btn" onclick="toggleEditorMode()" title="Toggle HTML">&lt;&gt; HTML</button>
+          </div>
+          <div id="editor-visual" class="editor-visual" contenteditable="true" spellcheck="true"></div>
+          <textarea id="editor-html" class="editor-html" spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group--half" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">
+            Meta Title
+            <span class="char-counter" id="meta-title-count"></span>
+          </label>
+          <input type="text" id="pf-meta_title" class="form-control" maxlength="70" placeholder="Max 60 chars — include keyword">
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            Meta Description
+            <span class="char-counter" id="meta-desc-count"></span>
+          </label>
+          <input type="text" id="pf-meta_description" class="form-control" maxlength="170" placeholder="Max 155 chars — compelling summary">
+        </div>
+      </div>
+
+      <!-- Snippet preview -->
+      <div class="snippet-preview">
+        <div class="snippet-preview__url" id="snippet-url">typingcenternear.me/article-slug/</div>
+        <div class="snippet-preview__title" id="snippet-title">Article title here…</div>
+        <div class="snippet-preview__desc" id="snippet-desc">Meta description preview…</div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer">
+          <input type="checkbox" id="pf-published"> Publish immediately
+        </label>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="adm-btn adm-btn--outline" onclick="closeModal('post-modal')">Cancel</button>
+      <button class="adm-btn adm-btn--outline" onclick="savePost(false)">💾 Save Draft</button>
+      <button class="adm-btn adm-btn--primary" onclick="savePost(true)">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="/assets/js/supabase.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/admin.js"></script>
+
+<script>
+// CSV template download
+function downloadCSVTemplate() {
+  const csv = 'name,slug,emirate,address,phone,lat,lng,services,rating,review_count,description\nAl Masa Typing Center,al-masa-typing-center,dubai,"Al Barsha, Dubai",+971 4 555 0101,25.1072,55.1562,"emirates-id,visa,ejari",4.5,120,Fast and reliable typing services in Dubai.';
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'typing-centers-template.csv';
+  a.click();
+}
+
+// Char counter for meta fields
+document.addEventListener('DOMContentLoaded', () => {
+  function updateCount(inputId, countId, max) {
+    const input = document.getElementById(inputId);
+    const counter = document.getElementById(countId);
+    if (!input || !counter) return;
+    input.addEventListener('input', () => {
+      const len = input.value.length;
+      counter.textContent = `${len}/${max}`;
+      counter.className = 'char-counter ' + (len > max ? 'over' : len > max * 0.9 ? 'warn' : 'ok');
+    });
+  }
+  updateCount('pf-meta_title', 'meta-title-count', 60);
+  updateCount('pf-meta_description', 'meta-desc-count', 155);
+});
+</script>
+</body>
+</html>

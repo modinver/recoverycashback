@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin/*
+
+Sitemap: https://typingcenternear.me/sitemap.xml
+Sitemap: https://typingcenternear.me/sitemap-centers.xml
+Sitemap: https://typingcenternear.me/sitemap-blog.xml
+Sitemap: https://typingcenternear.me/sitemap-cities.xml
+
+Crawl-delay: 1

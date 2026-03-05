@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Center — TypingCenterNear.me</title>
+  <meta name="description" content="Typing center in UAE. Emirates ID, visa, Ejari and government document services.">
+  <link rel="canonical" href="https://typingcenternear.me/">
+  <meta name="robots" content="index, follow">
+
+  <!-- OG (populated by JS) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_AE">
+  <meta name="geo.region" content="AE">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+  <script>
+    window.SUPABASE_URL = 'https://YOUR-SUPABASE-SELF-HOSTED-URL';
+    window.SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
+  </script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar__inner">
+    <a href="/" class="navbar__logo">
+      <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0e7c6b"/><path d="M8 11h16M8 16h12M8 21h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      TypingCenterNear.me
+    </a>
+    <nav class="navbar__nav" id="main-nav">
+      <a href="/typing-center-dubai/">Dubai</a>
+      <a href="/typing-center-abu-dhabi/">Abu Dhabi</a>
+      <a href="/typing-center-sharjah/">Sharjah</a>
+      <a href="/blog/">Blog</a>
+      <a href="/search/" class="navbar__cta">🔍 Find Center</a>
+    </nav>
+    <button class="navbar__hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- CENTER HERO -->
+<div class="center-hero">
+  <div class="center-hero__inner container">
+    <div>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <a href="#" id="bc-city-link" id="bc-city">Dubai</a>
+        <span>›</span>
+        <span id="center-name">Loading…</span>
+      </nav>
+      <h1 class="center-hero__name" id="center-name">Loading…</h1>
+      <p class="center-hero__address">📍 <span id="center-address">—</span></p>
+      <div id="center-rating" style="display:flex;align-items:center;gap:8px;margin-bottom:12px"></div>
+      <span id="featured-badge" class="badge-featured" style="display:none">⭐ Top Rated</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;min-width:160px">
+      <a id="btn-call" href="#" class="btn btn--primary" style="display:none">📞 Call Now</a>
+      <a id="btn-whatsapp" href="#" class="btn btn--outline" target="_blank" rel="noopener" style="display:none">💬 WhatsApp</a>
+      <a id="btn-directions" href="#" class="btn btn--outline" target="_blank" rel="noopener" style="display:none">🗺️ Directions</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="center-detail-grid container">
+  <!-- LEFT COLUMN -->
+  <div>
+    <!-- Gallery -->
+    <div id="photo-gallery" style="margin-bottom:24px"></div>
+
+    <!-- Description -->
+    <div class="info-card" style="margin-bottom:24px">
+      <h2 class="info-card__title">About this center</h2>
+      <div id="center-description" style="font-size:0.9rem;line-height:1.8;color:#4b5563">
+        <div class="skeleton skeleton--text"></div>
+        <div class="skeleton skeleton--text"></div>
+        <div class="skeleton skeleton--text" style="width:70%"></div>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="info-card" style="margin-bottom:24px">
+      <h2 class="info-card__title">Services Offered</h2>
+      <div id="services-list" style="display:flex;flex-wrap:wrap;gap:8px">
+        <div class="skeleton" style="height:28px;width:100px;border-radius:99px"></div>
+        <div class="skeleton" style="height:28px;width:80px;border-radius:99px"></div>
+        <div class="skeleton" style="height:28px;width:120px;border-radius:99px"></div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="info-card" style="margin-bottom:24px">
+      <h2 class="info-card__title">Location</h2>
+      <div id="map"></div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="info-card">
+      <h2 class="info-card__title">Customer Reviews</h2>
+      <div id="reviews-list">
+        <div class="skeleton skeleton--text"></div>
+        <div class="skeleton skeleton--text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN / SIDEBAR -->
+  <div>
+    <!-- Contact info -->
+    <div class="info-card" style="margin-bottom:16px;position:sticky;top:80px">
+      <h2 class="info-card__title">Contact & Hours</h2>
+      <div class="info-row"><span class="info-row__label">Phone</span><span class="info-row__value" id="info-phone">—</span></div>
+      <div class="info-row"><span class="info-row__label">WhatsApp</span><span class="info-row__value" id="info-whatsapp">—</span></div>
+      <div class="info-row"><span class="info-row__label">Email</span><span class="info-row__value" id="info-email">—</span></div>
+      <div class="info-row"><span class="info-row__label">Website</span><span class="info-row__value" id="info-website">—</span></div>
+      <div class="info-row"><span class="info-row__label">Area</span><span class="info-row__value" id="info-area">—</span></div>
+      <div class="info-row"><span class="info-row__label">Price range</span><span class="info-row__value" id="info-price">—</span></div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9" id="opening-hours"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <div class="footer__logo">🖨️ TypingCenterNear.me</div>
+      <p class="footer__desc">UAE Typing Center Directory. Find Emirates ID, visa, Ejari and government services near you.</p>
+    </div>
+    <div>
+      <div class="footer__col-title">Emirates</div>
+      <div class="footer__links">
+        <a href="/typing-center-dubai/">Dubai</a>
+        <a href="/typing-center-abu-dhabi/">Abu Dhabi</a>
+        <a href="/typing-center-sharjah/">Sharjah</a>
+        <a href="/typing-center-ajman/">Ajman</a>
+        <a href="/typing-center-ras-al-khaimah/">Ras Al Khaimah</a>
+        <a href="/typing-center-fujairah/">Fujairah</a>
+        <a href="/typing-center-umm-al-quwain/">Umm Al Quwain</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer__col-title">Services</div>
+      <div class="footer__links">
+        <a href="/search/?s=emirates-id">Emirates ID</a>
+        <a href="/search/?s=visa">Visa Typing</a>
+        <a href="/search/?s=ejari">Ejari</a>
+        <a href="/search/?s=tasheel">Tasheel</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer__col-title">Info</div>
+      <div class="footer__links">
+        <a href="/blog/">Blog &amp; Guides</a>
+        <a href="/">All Emirates</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2024 TypingCenterNear.me</span>
+    <span>Not affiliated with any government entity</span>
+  </div>
+</footer>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPaA=" crossorigin=""></script>
+<script src="/assets/js/supabase.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/center.js"></script>
+</body>
+</html>
